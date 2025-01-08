@@ -5,6 +5,7 @@ import { AnnouncementDialogComponent } from './components/modal/modal.component'
 import { AnnouncementService } from '../../_services/announcements';
 import { Announcement } from '../../models/announcements.model';
 import { Subscription } from 'rxjs';
+import { EventBusService } from '../../_services/event-bus.service';
 
 @Component({
   selector: 'app-announcements',
@@ -18,11 +19,22 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private announcementService: AnnouncementService,
-    private snackBar: MatSnackBar // Snackbar service for feedback
+    private snackBar: MatSnackBar,
+    private eventBus: EventBusService
   ) {}
 
   ngOnInit(): void {
     this.loadAnnouncements();
+    this.eventBus.events$.subscribe((event) => {
+      if (event) {
+        if (event === 'announcement-change') {
+          this.announcementService.getAllAnnouncements().subscribe({
+            next: (data: Announcement[]) => (this.announcements = data),
+            error: (err) => this.showError('Error loading announcements'),
+          });
+        }
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -46,15 +58,15 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
       data: announcement || { name: '', url: '', dateFrom: '', dateTo: '' },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (result.id) {
-          this.updateAnnouncement(result);
-        } else {
-          this.createAnnouncement(result);
-        }
-      }
-    });
+    // dialogRef.afterClosed().subscribe((result) => {
+    //   if (result) {
+    //     if (result.id) {
+    //       this.updateAnnouncement(result);
+    //     } else {
+    //       this.createAnnouncement(result);
+    //     }
+    //   }
+    // });
   }
 
   updateAnnouncement(updatedAnnouncement: Announcement): void {
@@ -72,7 +84,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
-  createAnnouncement(newAnnouncement: Announcement): void {
+  createAnnouncement(newAnnouncement: FormData): void {
     const subscription = this.announcementService
       .createAnnouncement(newAnnouncement)
       .subscribe({

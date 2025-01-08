@@ -2,20 +2,25 @@ import {
   ChangeDetectionStrategy,
   Component,
   Inject,
+  Input,
   OnInit,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
-import { Announcement } from '../../../../models/announcements.model';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormsModule,
+} from '@angular/forms';
 import { AnnouncementService } from '../../../../_services/announcements';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { DateAdapter, provideNativeDateAdapter } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {CommonModule} from "@angular/common";
+import { EventBusService } from '../../../../_services/event-bus.service';
 
 @Component({
   selector: 'app-announcement-dialog',
@@ -29,46 +34,50 @@ import {CommonModule} from "@angular/common";
     MatDatepickerModule,
     MatButtonModule,
     CommonModule,
+    ReactiveFormsModule,
   ],
   providers: [provideNativeDateAdapter()],
-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnnouncementDialogComponent implements OnInit {
-  selectedFile: File | null = null; // Store the selected file
-
+  selectedFile: File | null = null;
+  form: FormGroup;
+  isEditMode: boolean = false;
   constructor(
+    private EventBusService: EventBusService,
     private announcementService: AnnouncementService,
     public dialogRef: MatDialogRef<AnnouncementDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Announcement
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.form = new FormGroup({
+      name: new FormControl(data?.name || '', [Validators.required]),
+      url: new FormControl(data?.url || '', [Validators.required]),
+      dateFrom: new FormControl(data?.dateFrom || null),
+      dateTo: new FormControl(data?.dateTo || null),
+      picutreUrl: new FormControl(data?.pictureUrl || null),
+    });
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (!this.form) {
+      this.isEditMode = true;
+    } else {
+      this.isEditMode = false;
+    }
+  }
 
   onImageChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      this.selectedFile = input.files[0]; // Store the selected file
+      this.selectedFile = input.files[0];
       const reader = new FileReader();
 
       reader.onload = (e: any) => {
-        this.data.pictureUrl = e.target.result; // Assign image data URL to imageUrl
+        this.data.pictureUrl = e.target.result;
       };
 
       reader.readAsDataURL(this.selectedFile);
     }
-  }
-
-  onDateFromChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.data.dateFrom = new Date(input.value);
-    console.log('Selected Date From:', this.data.dateFrom);
-  }
-
-  onDateToChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.data.dateTo = new Date(input.value);
-    console.log('Selected Date To:', this.data.dateTo);
   }
 
   onCancel(): void {
@@ -77,30 +86,42 @@ export class AnnouncementDialogComponent implements OnInit {
 
   onSave(): void {
     const formData = new FormData();
+    console.log('mode', this.isEditMode);
+    formData.append('name', this.form.value.name);
+    formData.append('url', this.form.value.url);
+    formData.append('dateFrom', this.formatDate(this.form.value.dateFrom));
+    formData.append('dateTo', this.formatDate(this.form.value.dateTo));
 
-    // Append form fields to FormData
-    formData.append('name', this.data.name);
-    formData.append('url', this.data.url);
-    // Convert dateFrom and dateTo to ISO strings (or any required string format)
-    formData.append(
-      'dateFrom',
-      this.data.dateFrom.toISOString().split('T')[0].replace(/-/g, '/')
-    );
-    formData.append(
-      'dateTo',
-      this.data.dateTo.toISOString().split('T')[0].replace(/-/g, '/')
-    );
-
-    // Append the picture file if it exists
     if (this.selectedFile) {
       formData.append('picture', this.selectedFile, this.selectedFile.name);
     }
-    this.announcementService
-      .updateAnnouncement(this.data.id, formData)
-      .subscribe({
+    console.log('outside', this.data);
+    if (this.isEditMode) {
+      console.log(this.data);
+      this.announcementService
+        .updateAnnouncement(this.data.id, formData)
+        .subscribe({
+          next: () => {
+            this.dialogRef.close(true);
+            this.EventBusService.emit('announcement-change');
+          },
+          error: (err) => console.error('Failed to update announcement', err),
+        });
+      this.EventBusService.emit('announcement-change');
+    } else {
+      console.log('this', this.data);
+      this.announcementService.createAnnouncement(formData).subscribe({
         next: () => {
-          this.dialogRef.close();
+          this.dialogRef.close(true);
+          this.EventBusService.emit('announcement-change');
         },
+        error: (err) => console.error('Failed to create announcement', err),
       });
+    }
+  }
+
+  private formatDate(date: Date): string {
+    const parsedDate = new Date(date);
+    return parsedDate.toString();
   }
 }

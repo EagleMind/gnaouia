@@ -1,5 +1,5 @@
 export interface Announcement {
-  id: string; // Optional since it will be generated
+  id: string;
   name: string;
   url: string;
   dateFrom: Date;
