@@ -12,10 +12,6 @@ export class AuthGuard {
     return new Promise<boolean>((resolve) => {
       this.authService.isLoggedIn.subscribe((result) => {
         if (result) {
-          console.log(
-            'this.authService.isLoggedIn',
-            this.authService.isLoggedIn
-          );
           resolve(true);
         } else {
           this.router.navigate(['/login']);

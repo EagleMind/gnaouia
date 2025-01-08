@@ -14,7 +14,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   private hasTokenAndValid(): boolean {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('jwtToken');
     if (token) {
       const expiry = JSON.parse(atob(token.split('.')[1])).exp;
       return Math.floor(new Date().getTime() / 1000) <= expiry;
@@ -23,12 +23,15 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<any> {
+    if (!this.hasTokenAndValid()) {
+      localStorage.removeItem('JwtToken');
+    }
     return this.http
       .post<any>(`${this.apiUrl}/auth/signin`, { email, password })
       .pipe(
         tap((response) => {
-          if (response && response.token) {
-            localStorage.setItem('access_token', response.token);
+          if (response && response.jwtToken) {
+            localStorage.setItem('jwtToken', response.jwtToken);
             this.isLoggedIn.next(true);
           }
         })
@@ -41,12 +44,11 @@ export class AuthService {
     return this.http
       .post<any>(`${this.apiUrl}/auth/signup`, {
         payload,
-        roles,
       })
       .pipe(
         tap((response) => {
-          if (response && response.token) {
-            localStorage.setItem('access_token', response.token);
+          if (response && response.jwtToken) {
+            localStorage.setItem('jwtToken', response.jwtToken);
             this.isLoggedIn.next(true);
           }
         })
@@ -54,7 +56,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('access_token');
+    localStorage.removeItem('jwtToken');
     this.isLoggedIn.next(false);
     this.router.navigate(['/login']); // Redirect to login or another page on logout
   }
@@ -64,12 +66,7 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('access_token');
-  }
-
-  public getAccountTypeFromToken(token: string): string {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.user.accountType;
+    return localStorage.getItem('jwtToken');
   }
 
   getUserIdFromToken(token: string): string {

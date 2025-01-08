@@ -1,22 +1,16 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { AuthService } from './_services/auth.service';
-import { initFlowbite } from 'flowbite';
-
+import { AuthService } from '../_services/auth.service';
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css'],
 })
-export class AppComponent {
+export class homeComponent {
   isLoggedIn: boolean | null = null;
   userType: string | null = null;
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    initFlowbite();
     this.authService.LoggedIn().subscribe((loggedIn: any) => {
       this.isLoggedIn = loggedIn ? true : false;
     });

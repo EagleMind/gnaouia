@@ -1,0 +1,145 @@
+<div
+  class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50"
+>
+  <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+    <h2 class="text-2xl font-bold mb-6">
+      {{ data.id ? "Edit Announcement" : "New Announcement" }}
+    </h2>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+        <input
+          type="text"
+          [(ngModel)]="data.name"
+          required
+          class="w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">URL</label>
+        <input
+          type="text"
+          [(ngModel)]="data.url"
+          required
+          class="w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Date From</label
+        >
+        <mat-form-field>
+          <mat-label>Choose a date</mat-label>
+          <input matInput [matDatepicker]="picker" />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <input
+          [value]="data.dateFrom"
+          [(ngModel)]="data.dateFrom"
+          (change)="onDateFromChange($event)"
+          type="date"
+          required
+          class="w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Date To</label
+        >
+        <input
+          [(ngModel)]="data.dateTo"
+          (change)="onDateToChange($event)"
+          type="date"
+          required
+          class="w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Image</label
+        >
+        <!-- Display current image or placeholder -->
+        <div class="relative mb-4">
+          <div class="relative">
+            <!-- Display image or placeholder -->
+            @if(data.pictureUrl) {
+            <img
+              [src]="data.pictureUrl"
+              alt="Announcement Image"
+              class="w-full h-32 object-cover rounded-md"
+            />
+            } @else {
+            <div
+              class="h-32 bg-gray-200 mx-5 flex items-center justify-center rounded-md"
+            >
+              <svg
+                class="svg-icon"
+                style="
+                  width: 2em;
+                  height: 2em;
+                  vertical-align: middle;
+                  fill: currentColor;
+                  overflow: hidden;
+                "
+                viewBox="0 0 1024 1024"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M252.3 743.3l235.8-42.4-147.8-179.1zM365.2 501.4l148.2 178.8L868.3 389 720.2 210.2zM958 259.7l-92.6-111.9c-15.1-18.4-43.7-20.3-63.7-4.2l-53.9 44 148.1 179.1 53.9-44c19.6-16.1 23.3-44.6 8.2-63z"
+                  fill="#2867CE"
+                />
+                <path
+                  d="M770.1 893.7H259.6c-93.1 0-168.5-75.5-168.5-168.5V345.4c0-93.1 75.5-168.5 168.5-168.5h49.6c26.6 0 48.1 21.5 48.1 48.1s-21.5 48.1-48.1 48.1h-49.6c-40 0-72.4 32.4-72.4 72.4v379.8c0 40 32.4 72.4 72.4 72.4h510.5c40 0 72.4-32.4 72.4-72.4v-132c0-26.6 21.5-48.1 48.1-48.1s48.1 21.5 48.1 48.1v132c-0.1 93-75.5 168.4-168.6 168.4z"
+                  fill="#BDD2EF"
+                />
+              </svg>
+              <span>No Image</span>
+            </div>
+            }
+
+            <!-- Overlayed input -->
+
+            <!-- Icon overlay -->
+            <div
+              class="absolute inset-0 top-10 left-10 flex items-center justify-center rounded-md"
+            >
+              <input
+                type="file"
+                (change)="onImageChange($event)"
+                accept="image/*"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end space-x-4">
+        <button
+          type="button"
+          class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md shadow-sm hover:bg-gray-200"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="px-3 py-1.5 text-sm font-medium bg-green-500 text-white border-gray-300 rounded-md hover:bg-green-600 focus:ring-2 focus:ring-gray-300 transition"
+          (click)="onSave()"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

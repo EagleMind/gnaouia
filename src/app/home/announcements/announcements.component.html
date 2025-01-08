@@ -1,0 +1,86 @@
+<div class="overflow-x-auto">
+  <table
+    class="min-w-full divide-y divide-gray-300 bg-white shadow-lg rounded-lg"
+  >
+    <thead class="bg-gray-100">
+      <tr>
+        <th
+          class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide"
+        >
+          Name
+        </th>
+        <th
+          class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide"
+        >
+          URL
+        </th>
+        <th
+          class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide"
+        >
+          Date From
+        </th>
+        <th
+          class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide"
+        >
+          Date To
+        </th>
+        <th
+          class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide"
+        >
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      @if (announcements.length) { @for (announcement of announcements; track
+      announcement.id) {
+      <tr class="hover:bg-gray-50 transition-colors duration-200">
+        <td
+          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+        >
+          {{ announcement.name }}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+          <a
+            [href]="announcement.url"
+            target="_blank"
+            class="hover:underline"
+            >{{ announcement.url }}</a
+          >
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+          {{ announcement.dateFrom }}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+          {{ announcement.dateTo }}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap space-x-2">
+          <button
+            mat-button
+            (click)="openDialog(announcement)"
+            class="px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 hover:border-gray-400 focus:ring-2 focus:ring-gray-300 transition"
+          >
+            Edit
+          </button>
+          <button
+            mat-button
+            (click)="deleteAnnouncement(announcement.id)"
+            class="px-3 py-1.5 text-sm font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50 hover:border-red-400 focus:ring-2 focus:ring-red-200 transition"
+          >
+            delete
+          </button>
+        </td>
+      </tr>
+      } } @else {
+      <tr>
+        <td
+          colspan="5"
+          class="px-6 py-4 text-center text-sm text-gray-500 italic"
+        >
+          No announcements found
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,48 @@
+<div class="flex">
+  <button (click)="toggleSidebar()" class="p-2 text-gray-700 md:hidden">
+    &#9776;
+    <!-- Hamburger icon -->
+  </button>
+
+  <div
+    [ngClass]="{ block: isOpen, hidden: !isOpen }"
+    class="md:block bg-gray-800 text-white w-64 h-full fixed md:relative transition-transform duration-300"
+  >
+    <button (click)="toggleSidebar()" class="p-2 text-white md:hidden">
+      &#9776;
+      <!-- Hamburger icon -->
+    </button>
+    <h2 class="p-4 text-xl border-b border-gray-700">Navigation</h2>
+
+    <ul class="mt-4">
+      @for(route of routes ; track route.path) {
+      <li class="p-2 hover:bg-gray-700 transition-colors duration-200">
+        <a [routerLink]="route.path" class="flex items-center text-white">
+          <span class="mr-2">
+            <!-- Optional Icon -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12h18M3 6h18M3 18h18"
+              />
+            </svg>
+          </span>
+          {{ route.path }}
+        </a>
+      </li>
+      }
+    </ul>
+  </div>
+
+  <div class="flex-1 p-4 ml-64 md:ml-0">
+    <router-outlet></router-outlet>
+  </div>
+</div>
