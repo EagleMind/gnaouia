@@ -118,7 +118,10 @@
           class="px-3 py-1.5 text-sm font-medium bg-green-500 text-white rounded-md hover:bg-green-600"
           (click)="onSave()"
         >
-          {{ data?.id ? "Save Changes" : "Create Announcement" }}
+          @if(data?.id) {
+          <fa-icon [icon]="['fas', 'pen']"></fa-icon> Save changes }
+          @if(!data?.id){ <fa-icon [icon]="['fas', 'plus']"></fa-icon> Create
+          Announcement }
         </button>
       </div>
     </form>

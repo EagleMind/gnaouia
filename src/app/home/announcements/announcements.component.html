@@ -56,10 +56,10 @@
           >
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {{ announcement.dateFrom }}
+          {{ formatDate(announcement.dateFrom) }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {{ announcement.dateTo }}
+          {{ formatDate(announcement.dateTo) }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap space-x-2">
           <button
@@ -67,14 +67,14 @@
             (click)="openDialog(announcement)"
             class="px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 hover:border-gray-400 focus:ring-2 focus:ring-gray-300 transition"
           >
-            Edit
+            <fa-icon [icon]="faPen"></fa-icon>
           </button>
           <button
             mat-button
             (click)="deleteAnnouncement(announcement.id)"
             class="px-3 py-1.5 text-sm font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50 hover:border-red-400 focus:ring-2 focus:ring-red-200 transition"
           >
-            delete
+            <fa-icon [icon]="faTrash"></fa-icon>
           </button>
         </td>
       </tr>

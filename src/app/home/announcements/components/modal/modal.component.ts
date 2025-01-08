@@ -21,6 +21,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { EventBusService } from '../../../../_services/event-bus.service';
+import {
+  FaIconLibrary,
+  FontAwesomeModule,
+} from '@fortawesome/angular-fontawesome';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-announcement-dialog',
@@ -35,6 +40,7 @@ import { EventBusService } from '../../../../_services/event-bus.service';
     MatButtonModule,
     CommonModule,
     ReactiveFormsModule,
+    FontAwesomeModule,
   ],
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,11 +50,13 @@ export class AnnouncementDialogComponent implements OnInit {
   form: FormGroup;
   isEditMode: boolean = false;
   constructor(
+    private library: FaIconLibrary,
     private EventBusService: EventBusService,
     private announcementService: AnnouncementService,
     public dialogRef: MatDialogRef<AnnouncementDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    this.library.addIcons(faPen, faTrash);
     this.form = new FormGroup({
       name: new FormControl(data?.name || '', [Validators.required]),
       url: new FormControl(data?.url || '', [Validators.required]),

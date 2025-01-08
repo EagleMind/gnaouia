@@ -6,7 +6,8 @@ import { AnnouncementService } from '../../_services/announcements';
 import { Announcement } from '../../models/announcements.model';
 import { Subscription } from 'rxjs';
 import { EventBusService } from '../../_services/event-bus.service';
-
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
 @Component({
   selector: 'app-announcements',
   templateUrl: './announcements.component.html',
@@ -15,7 +16,8 @@ import { EventBusService } from '../../_services/event-bus.service';
 export class AnnouncementsComponent implements OnInit, OnDestroy {
   announcements: Announcement[] = [];
   private subscriptions: Subscription[] = [];
-
+  faPen = faPen;
+  faTrash = faTrash;
   constructor(
     private dialog: MatDialog,
     private announcementService: AnnouncementService,
@@ -51,7 +53,9 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
       });
     this.subscriptions.push(subscription);
   }
-
+  formatDate(date: string | Date, format: string = 'MMMM Do YYYY'): string {
+    return moment(date).format(format);
+  }
   openDialog(announcement?: Announcement): void {
     const dialogRef = this.dialog.open(AnnouncementDialogComponent, {
       width: '400px',
