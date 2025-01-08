@@ -15,6 +15,7 @@ import { DateAdapter, provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-announcement-dialog',
@@ -27,7 +28,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatInputModule,
     MatDatepickerModule,
     MatButtonModule,
-    BrowserAnimationsModule,
+    CommonModule,
   ],
   providers: [provideNativeDateAdapter()],
 

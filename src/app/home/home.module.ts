@@ -7,6 +7,6 @@ import { AnnouncementsComponent } from './announcements/announcements.component'
 
 @NgModule({
   declarations: [homeComponent, AnnouncementsComponent],
-  imports: [HomeRoutingModule, SidebarComponent],
+   imports: [HomeRoutingModule],
 })
 export class HomeModule {}
