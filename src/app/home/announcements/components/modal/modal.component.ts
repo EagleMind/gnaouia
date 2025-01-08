@@ -25,7 +25,7 @@ import {
   FaIconLibrary,
   FontAwesomeModule,
 } from '@fortawesome/angular-fontawesome';
-import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-announcement-dialog',
@@ -56,7 +56,7 @@ export class AnnouncementDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<AnnouncementDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.library.addIcons(faPen, faTrash);
+    this.library.addIcons(faPen, faPlus);
     this.form = new FormGroup({
       name: new FormControl(data?.name || '', [Validators.required]),
       url: new FormControl(data?.url || '', [Validators.required]),
