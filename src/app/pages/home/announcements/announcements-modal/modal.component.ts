@@ -24,8 +24,8 @@ import {
   FontAwesomeModule,
 } from '@fortawesome/angular-fontawesome';
 import { faPen, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { EventBusService } from '../../../../../_services/event-bus.service';
-import { AnnouncementService } from '../../../../../_services/announcements';
+import { EventBusService } from '../../../../_services/event-bus.service';
+import { AnnouncementService } from '../../../../_services/announcements';
 
 @Component({
   selector: 'app-announcement-dialog',

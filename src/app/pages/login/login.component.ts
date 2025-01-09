@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../_services/auth.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import {
   FormBuilder,
@@ -8,6 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import {AuthService} from "../../_services/auth.service";
 @Component({
   selector: 'app-login',
   standalone: true,

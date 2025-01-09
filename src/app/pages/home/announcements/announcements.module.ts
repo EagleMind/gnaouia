@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
-import { AnnouncementsComponent } from './announcements/announcements.component';
+import { AnnouncementsComponent } from './announcements.component';
 
 @NgModule({
   declarations: [AnnouncementsComponent],

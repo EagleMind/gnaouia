@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AnnouncementDialogComponent } from './components/modal/modal.component';
+import { AnnouncementDialogComponent } from './announcements-modal/modal.component';
 import { Subscription } from 'rxjs';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';

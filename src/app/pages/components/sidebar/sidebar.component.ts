@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Route, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { routes } from '../home-routing.module';
+import { routes } from '../../home/home-routing.module';
 
 @Component({
   selector: 'app-sidebar',

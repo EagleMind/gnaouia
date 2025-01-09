@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { homeComponent } from './home.component';
-import { UserRoleGuard } from '../security/guards/user-role.guard';
+import { UserRoleGuard } from '../../security/guards/user-role.guard';
 import { AnnouncementsModule } from './announcements/announcements.module';
 
 export const routes: Routes = [
