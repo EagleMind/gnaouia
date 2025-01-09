@@ -10,6 +10,7 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./pages/home/home.module').then((homeModule) => homeModule.HomeModule),
   },
+
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
 
   { path: '**', redirectTo: 'login' },
