@@ -13,19 +13,19 @@ import {
   ReactiveFormsModule,
   FormsModule,
 } from '@angular/forms';
-import { AnnouncementService } from '../../../../_services/announcements';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { EventBusService } from '../../../../_services/event-bus.service';
 import {
   FaIconLibrary,
   FontAwesomeModule,
 } from '@fortawesome/angular-fontawesome';
 import { faPen, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { EventBusService } from '../../../../../_services/event-bus.service';
+import { AnnouncementService } from '../../../../../_services/announcements';
 
 @Component({
   selector: 'app-announcement-dialog',
@@ -113,7 +113,8 @@ export class AnnouncementDialogComponent implements OnInit {
             this.dialogRef.close(true);
             this.EventBusService.emit('announcement-change');
           },
-          error: (err) => console.error('Failed to update announcement', err),
+          error: (err: any) =>
+            console.error('Failed to update announcement', err),
         });
       this.EventBusService.emit('announcement-change');
     } else {
@@ -123,7 +124,8 @@ export class AnnouncementDialogComponent implements OnInit {
           this.dialogRef.close(true);
           this.EventBusService.emit('announcement-change');
         },
-        error: (err) => console.error('Failed to create announcement', err),
+        error: (err: any) =>
+          console.error('Failed to create announcement', err),
       });
     }
   }
