@@ -12,6 +12,7 @@ import {
 } from '../../../models/announcements.model';
 import { AnnouncementService } from '../../../_services/announcements';
 import { EventBusService } from '../../../_services/event-bus.service';
+import { ActionCellRendererComponent } from './render-button/render-buttons.component';
 
 @Component({
   selector: 'app-announcements',
@@ -41,13 +42,10 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
       filter: true,
       valueFormatter: (params) => this.formatDate(params.value),
     },
+
     {
       headerName: 'Actions',
-      cellRenderer: 'actionCellRenderer', // Use a custom renderer
-      cellRendererParams: {
-        onEdit: this.openDialog.bind(this), // Bind edit action
-        onDelete: this.deleteAnnouncement.bind(this), // Bind delete action
-      },
+      cellRenderer: ActionCellRendererComponent, // Use a custom renderer
     },
   ];
 
