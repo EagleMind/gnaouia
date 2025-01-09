@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Announcement } from '../models/announcements.model';
+import {
+  Announcement,
+  AnnouncementsResponse,
+} from '../models/announcements.model';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -11,9 +14,13 @@ export class AnnouncementService {
   private apiUrl = environment.apiUrl; // Adjust the URL accordingly
 
   constructor(private http: HttpClient) {}
-
-  getAllAnnouncements(): Observable<Announcement[]> {
-    return this.http.get<Announcement[]>(`${this.apiUrl}/announcements/all`);
+  getAllAnnouncements(
+    page: number,
+    size: number
+  ): Observable<AnnouncementsResponse> {
+    return this.http.get<AnnouncementsResponse>(
+      `${this.apiUrl}/announcements/all?page=${page}&size=${size}`
+    );
   }
 
   getAnnouncementById(id: string): Observable<Announcement> {

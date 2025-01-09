@@ -1,13 +1,18 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar'; // For error/snackbar handling
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AnnouncementDialogComponent } from './components/modal/modal.component';
-import { AnnouncementService } from '../../_services/announcements';
-import { Announcement } from '../../models/announcements.model';
 import { Subscription } from 'rxjs';
-import { EventBusService } from '../../_services/event-bus.service';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
+import { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
+import {
+  Announcement,
+  AnnouncementsResponse,
+} from '../../../models/announcements.model';
+import { AnnouncementService } from '../../../_services/announcements';
+import { EventBusService } from '../../../_services/event-bus.service';
+
 @Component({
   selector: 'app-announcements',
   templateUrl: './announcements.component.html',
@@ -15,9 +20,51 @@ import moment from 'moment';
 })
 export class AnnouncementsComponent implements OnInit, OnDestroy {
   announcements: Announcement[] = [];
+  totalElements: number = 0;
+  currentPage: number = 0;
+  pageSize: number = 2;
+  gridApi: any;
+  columnDefs: (ColDef<Announcement> | ColGroupDef<Announcement>)[] = [
+    { headerName: 'Name', field: 'name', sortable: true, filter: true },
+    { headerName: 'URL', field: 'url', sortable: true, filter: true },
+    {
+      headerName: 'Date From',
+      field: 'dateFrom',
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => this.formatDate(params.value),
+    },
+    {
+      headerName: 'Date To',
+      field: 'dateTo',
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => this.formatDate(params.value),
+    },
+    {
+      headerName: 'Actions',
+      cellRenderer: 'actionCellRenderer', // Use a custom renderer
+      cellRendererParams: {
+        onEdit: this.openDialog.bind(this), // Bind edit action
+        onDelete: this.deleteAnnouncement.bind(this), // Bind delete action
+      },
+    },
+  ];
+
+  gridOptions: GridOptions = {
+    pagination: true,
+    paginationPageSize: this.pageSize,
+    defaultColDef: {
+      resizable: true,
+      sortable: true,
+      filter: true,
+    },
+  };
+
   private subscriptions: Subscription[] = [];
   faPen = faPen;
   faTrash = faTrash;
+
   constructor(
     private dialog: MatDialog,
     private announcementService: AnnouncementService,
@@ -27,50 +74,54 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadAnnouncements();
-    this.eventBus.events$.subscribe((event) => {
-      if (event) {
+    this.subscriptions.push(
+      this.eventBus.events$.subscribe((event) => {
         if (event === 'announcement-change') {
-          this.announcementService.getAllAnnouncements().subscribe({
-            next: (data: Announcement[]) => (this.announcements = data),
-            error: (err) => this.showError('Error loading announcements'),
-          });
+          this.loadAnnouncements();
         }
-      }
-    });
+      })
+    );
   }
 
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions to prevent memory leaks
     this.subscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  onGridReady(params: any): void {
+    this.gridApi = params.api;
+    this.loadAnnouncements();
   }
 
   loadAnnouncements(): void {
     const subscription = this.announcementService
-      .getAllAnnouncements()
+      .getAllAnnouncements(this.currentPage, this.pageSize)
       .subscribe({
-        next: (data: Announcement[]) => (this.announcements = data),
-        error: (err) => this.showError('Error loading announcements'),
+        next: (response: AnnouncementsResponse) => {
+          this.announcements = response.content;
+          this.totalElements = response.totalElements;
+        },
+        error: () => this.showError('Error loading announcements'),
       });
     this.subscriptions.push(subscription);
   }
+
   formatDate(date: string | Date, format: string = 'MMMM Do YYYY'): string {
     return moment(date).format(format);
   }
+
   openDialog(announcement?: Announcement): void {
     const dialogRef = this.dialog.open(AnnouncementDialogComponent, {
       width: '400px',
       data: announcement || { name: '', url: '', dateFrom: '', dateTo: '' },
     });
 
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result) {
-    //     if (result.id) {
-    //       this.updateAnnouncement(result);
-    //     } else {
-    //       this.createAnnouncement(result);
-    //     }
-    //   }
-    // });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        result.id
+          ? this.updateAnnouncement(result)
+          : this.createAnnouncement(result);
+      }
+    });
   }
 
   updateAnnouncement(updatedAnnouncement: Announcement): void {
@@ -83,7 +134,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
             duration: 3000,
           });
         },
-        error: (err) => this.showError('Error updating announcement'),
+        error: () => this.showError('Error updating announcement'),
       });
     this.subscriptions.push(subscription);
   }
@@ -98,7 +149,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
             duration: 3000,
           });
         },
-        error: (err) => this.showError('Error creating announcement'),
+        error: () => this.showError('Error creating announcement'),
       });
     this.subscriptions.push(subscription);
   }
@@ -113,7 +164,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
             duration: 3000,
           });
         },
-        error: (err) => this.showError('Error deleting announcement'),
+        error: () => this.showError('Error deleting announcement'),
       });
     this.subscriptions.push(subscription);
   }

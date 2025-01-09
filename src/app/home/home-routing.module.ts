@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { homeComponent } from './home.component';
 import { UserRoleGuard } from '../security/guards/user-role.guard';
-import { AnnouncementsComponent } from './announcements/announcements.component';
+import { AnnouncementsModule } from './announcements/announcements.module';
 
 export const routes: Routes = [
   {
@@ -12,7 +12,7 @@ export const routes: Routes = [
     children: [
       {
         path: 'annnouncements',
-        component: AnnouncementsComponent,
+        component: AnnouncementsModule,
       },
     ],
   },

@@ -1,0 +1,10 @@
+<ag-grid-angular
+  style="width: 100%; height: 500px"
+  class="ag-theme-alpine"
+  [rowData]="announcements"
+  [columnDefs]="columnDefs"
+  [pagination]="true"
+  [paginationPageSize]="10"
+  [domLayout]="'autoHeight'"
+  (gridReady)="onGridReady($event)"
+></ag-grid-angular>
