@@ -6,5 +6,8 @@ import { AnnouncementsComponent } from './announcements/announcements.component'
 @NgModule({
   declarations: [AnnouncementsComponent],
   imports: [CommonModule, AgGridModule, AgGridAngular],
+  exports: [
+    AnnouncementsComponent
+  ]
 })
 export class AnnouncementsModule {}
