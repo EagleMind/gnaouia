@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ICellRendererAngularComp } from 'ag-grid-angular';
 @Component({
   selector: 'app-render-buttons',
   standalone: true,
@@ -9,28 +10,32 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   templateUrl: './render-buttons.component.html',
   styleUrl: './render-buttons.component.css',
 })
-export class ActionCellRendererComponent {
+export class ActionCellRendererComponent implements ICellRendererAngularComp {
   params!: any;
   faPen = faPen;
   faTrash = faTrash;
-  constructor(private FontAwesomeModule: FaIconLibrary) {
-    this.FontAwesomeModule.addIcons(faPen, faTrash);
-  }
+  componentParent: any;
   agInit(params: any): void {
     this.params = params;
+    this.componentParent = this.params.context.componentParent;
   }
 
-  edit() {
-    // Call the edit function in AnnouncementsComponent with the current row data
-    this.params.context.componentParent.openDialog(this.params.data);
+  refresh(): boolean {
+    return false;
   }
 
-  delete() {
-    // Call the delete function in AnnouncementsComponent with the current row data id
-    if (confirm('Are you sure you want to delete?')) {
-      this.params.context.componentParent.deleteAnnouncement(
-        this.params.data.id
-      );
+  openEditDialog(): void {
+    if (this.params.context && this.params.context.openDialog) {
+      this.params.context.openDialog(this.params.data);
+    } else {
+      console.error('openDialog method not found in the context');
+    }
+  }
+  deleteAnnouncement(): void {
+    if (this.params.context && this.params.context.deleteAnnouncement) {
+      this.params.context.deleteAnnouncement(this.params.data.id);
+    } else {
+      console.error('openDialog method not found in the context');
     }
   }
 }

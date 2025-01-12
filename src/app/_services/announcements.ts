@@ -42,6 +42,6 @@ export class AnnouncementService {
   }
 
   deleteAnnouncement(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/announcements/${id}`);
   }
 }

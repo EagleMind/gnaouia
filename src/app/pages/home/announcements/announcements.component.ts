@@ -42,10 +42,12 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
       filter: true,
       valueFormatter: (params) => this.formatDate(params.value),
     },
-
     {
       headerName: 'Actions',
-      cellRenderer: ActionCellRendererComponent, // Use a custom renderer
+      cellRenderer: ActionCellRendererComponent,
+      cellRendererParams: {
+        context: this,
+      },
     },
   ];
 
