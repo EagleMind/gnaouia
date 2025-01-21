@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AnnouncementDialogComponent } from './announcements-modal/modal.component';
@@ -23,8 +23,10 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   announcements: Announcement[] = [];
   totalElements: number = 0;
   currentPage: number = 0;
-  pageSize: number = 2;
+  pageSize: number = 10;
   gridApi: any;
+  @Input() announcementId: string = '';
+  faPen = faPen;
   columnDefs: (ColDef<Announcement> | ColGroupDef<Announcement>)[] = [
     { headerName: 'Name', field: 'name', sortable: true, filter: true },
     { headerName: 'URL', field: 'url', sortable: true, filter: true },
@@ -62,7 +64,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   };
 
   private subscriptions: Subscription[] = [];
-  faPen = faPen;
+
   faTrash = faTrash;
 
   constructor(
@@ -154,9 +156,9 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
-  deleteAnnouncement(id: string): void {
+  deleteAnnouncement(): void {
     const subscription = this.announcementService
-      .deleteAnnouncement(id)
+      .deleteAnnouncement(this.announcementId)
       .subscribe({
         next: () => {
           this.loadAnnouncements();

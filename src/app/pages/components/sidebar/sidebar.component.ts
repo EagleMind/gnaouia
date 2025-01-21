@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Route, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { routes } from '../../home/home-routing.module';
@@ -14,7 +14,6 @@ export class SidebarComponent implements OnInit {
   routes: any = [];
   isOpen = false;
   constructor() {}
-
   ngOnInit(): void {
     this.routes = this.getRoutes();
   }

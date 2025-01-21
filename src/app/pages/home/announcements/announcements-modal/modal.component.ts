@@ -23,7 +23,7 @@ import {
   FaIconLibrary,
   FontAwesomeModule,
 } from '@fortawesome/angular-fontawesome';
-import { faPen, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { EventBusService } from '../../../../_services/event-bus.service';
 import { AnnouncementService } from '../../../../_services/announcements';
 
@@ -46,32 +46,32 @@ import { AnnouncementService } from '../../../../_services/announcements';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnnouncementDialogComponent implements OnInit {
+  faPlus = faPlus;
+  faCheck = faCheck;
   selectedFile: File | null = null;
   form: FormGroup;
   isEditMode: boolean = false;
+  isDeleteMode: boolean = false;
+
   constructor(
-    private library: FaIconLibrary,
-    private EventBusService: EventBusService,
+    private eventBusService: EventBusService,
     private announcementService: AnnouncementService,
     public dialogRef: MatDialogRef<AnnouncementDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.library.addIcons(faPen, faPlus);
     this.form = new FormGroup({
       name: new FormControl(data?.name || '', [Validators.required]),
       url: new FormControl(data?.url || '', [Validators.required]),
       dateFrom: new FormControl(data?.dateFrom || null),
       dateTo: new FormControl(data?.dateTo || null),
-      picutreUrl: new FormControl(data?.pictureUrl || null),
+      pictureUrl: new FormControl(data?.pictureUrl || null),
     });
+    this.isEditMode = !!data?.id; // Set edit mode if ID exists
+    this.isDeleteMode = data?.isDelete; // Check if it's for deletion
   }
 
   ngOnInit(): void {
-    if (!this.form) {
-      this.isEditMode = true;
-    } else {
-      this.isEditMode = false;
-    }
+    console.log(this.data);
   }
 
   onImageChange(event: Event): void {
@@ -93,8 +93,50 @@ export class AnnouncementDialogComponent implements OnInit {
   }
 
   onSave(): void {
+    if (this.isDeleteMode) {
+      this.deleteAnnouncement();
+    } else {
+      this.isEditMode ? this.updateAnnouncement() : this.createAnnouncement();
+    }
+  }
+
+  private createAnnouncement(): void {
+    const formData = this.prepareFormData();
+    this.announcementService.createAnnouncement(formData).subscribe({
+      next: () => {
+        this.dialogRef.close(true);
+        this.eventBusService.emit('announcement-change');
+      },
+      error: (err) => console.error('Failed to create announcement', err),
+    });
+  }
+
+  updateAnnouncement(): void {
+    const formData = this.prepareFormData();
+    this.announcementService
+      .updateAnnouncement(this.data.id, formData)
+      .subscribe({
+        next: () => {
+          this.dialogRef.close(true);
+          this.eventBusService.emit('announcement-change');
+        },
+        error: (err) => console.error('Failed to update announcement', err),
+      });
+  }
+
+  deleteAnnouncement(): void {
+    console.log('deleteAnnouncement');
+    this.announcementService.deleteAnnouncement(this.data.id).subscribe({
+      next: () => {
+        this.dialogRef.close(true);
+        this.eventBusService.emit('announcement-change');
+      },
+      error: (err) => console.error('Failed to delete announcement', err),
+    });
+  }
+
+  private prepareFormData(): FormData {
     const formData = new FormData();
-    console.log('mode', this.isEditMode);
     formData.append('name', this.form.value.name);
     formData.append('url', this.form.value.url);
     formData.append('dateFrom', this.formatDate(this.form.value.dateFrom));
@@ -103,35 +145,11 @@ export class AnnouncementDialogComponent implements OnInit {
     if (this.selectedFile) {
       formData.append('picture', this.selectedFile, this.selectedFile.name);
     }
-    console.log('outside', this.data);
-    if (this.isEditMode) {
-      console.log(this.data);
-      this.announcementService
-        .updateAnnouncement(this.data.id, formData)
-        .subscribe({
-          next: () => {
-            this.dialogRef.close(true);
-            this.EventBusService.emit('announcement-change');
-          },
-          error: (err: any) =>
-            console.error('Failed to update announcement', err),
-        });
-      this.EventBusService.emit('announcement-change');
-    } else {
-      console.log('this', this.data);
-      this.announcementService.createAnnouncement(formData).subscribe({
-        next: () => {
-          this.dialogRef.close(true);
-          this.EventBusService.emit('announcement-change');
-        },
-        error: (err: any) =>
-          console.error('Failed to create announcement', err),
-      });
-    }
+
+    return formData;
   }
 
   private formatDate(date: Date): string {
-    const parsedDate = new Date(date);
-    return parsedDate.toString();
+    return date ? new Date(date).toISOString() : '';
   }
 }
