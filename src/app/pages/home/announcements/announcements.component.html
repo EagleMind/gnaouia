@@ -1,12 +1,11 @@
 <button
   mat-button
   (click)="openDialog()"
-  class="px-3 my-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 hover:border-gray-400 focus:ring-2 focus:ring-gray-300 transition"
+  class="px-3 my-3 py-1.5 text-sm font-medium text-accent border rounded-md hover:bg-green-400 focus:ring-2 focus:ring-gray-300 transition bg-primary"
 >
   Create Announcement
 </button>
 <ag-grid-angular
-  style="width: 100%; height: 500px"
   class="ag-theme-alpine"
   [rowData]="announcements"
   [columnDefs]="columnDefs"

@@ -28,10 +28,23 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   @Input() announcementId: string = '';
   faPen = faPen;
   columnDefs: (ColDef<Announcement> | ColGroupDef<Announcement>)[] = [
-    { headerName: 'Name', field: 'name', sortable: true, filter: true },
-    { headerName: 'URL', field: 'url', sortable: true, filter: true },
+    {
+      headerName: 'Name',
+      headerClass: 'text-white',
+      field: 'name',
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: 'URL',
+      headerClass: 'text-white',
+      field: 'url',
+      sortable: true,
+      filter: true,
+    },
     {
       headerName: 'Date From',
+      headerClass: 'text-white',
       field: 'dateFrom',
       sortable: true,
       filter: true,
@@ -39,6 +52,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     },
     {
       headerName: 'Date To',
+      headerClass: 'text-white',
       field: 'dateTo',
       sortable: true,
       filter: true,
@@ -46,6 +60,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     },
     {
       headerName: 'Actions',
+      headerClass: 'text-white',
       cellRenderer: ActionCellRendererComponent,
       cellRendererParams: {
         context: this,

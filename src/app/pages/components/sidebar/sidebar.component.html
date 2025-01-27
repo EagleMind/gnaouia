@@ -1,51 +1,53 @@
-<div class="flex">
-  <img
-    src="https://www.google.com/url?sa=i&url=https%3A%2F%2Ffr.wikipedia.org%2Fwiki%2FAvenir_sportif_de_La_Marsa_%2528football%2529&psig=AOvVaw03usX1p3NCMx5_7yCmhJkA&ust=1737570051608000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOjKhIG3h4sDFQAAAAAdAAAAABAE"
-  />
-  <button (click)="toggleSidebar()" class="p-2 text-gray-700 md:hidden">
-    &#9776;
-    <!-- Hamburger icon -->
-  </button>
-
+<!-- Sidebar -->
+<button
+  (click)="toggleSidebar()"
+  class="p-2 text-gray-700 md:hidden flex left-2 z-50 w-full"
+>
+  &#9776;
+</button>
+<div class="flex h-screen font-sans">
   <div
-    [ngClass]="{ block: isOpen, hidden: !isOpen }"
-    class="md:block bg-gray-800 text-white w-64 h-full fixed md:relative transition-transform duration-300"
+    [ngClass]="{ 'translate-x-0': isOpen, '-translate-x-full': !isOpen }"
+    class="fixed top-0 left-0 z-40 w-64 h-full bg-green-500 text-white shadow-lg transform transition-transform duration-300 md:relative md:translate-x-0"
   >
-    <button (click)="toggleSidebar()" class="p-2 text-white md:hidden">
-      &#9776;
-      <!-- Hamburger icon -->
+    <!-- Close Button for Mobile -->
+    <button
+      (click)="toggleSidebar()"
+      class="p-2 text-white absolute top-2 right-2 md:hidden"
+    >
+      ✖
     </button>
-    <h2 class="p-4 text-xl border-b border-gray-700">Navigation</h2>
 
+    <!-- Logo -->
+    <div class="flex items-center justify-center h-32">
+      <img
+        class="h-20 w-20 rounded-full border-2 border-white"
+        src="https://upload.wikimedia.org/wikipedia/fr/thumb/6/68/Avenir_sportif_de_La_Marsa.png/130px-Avenir_sportif_de_La_Marsa.png"
+        alt="Logo"
+      />
+    </div>
+
+    <!-- Navigation -->
+    <h2
+      class="px-4 py-2 text-lg text-center font-bold tracking-wide border-b border-green-600"
+    >
+      Avenir sportif de <br />La Marsa
+    </h2>
     <ul class="mt-4">
       @for(route of routes ; track route.path) {
-      <li class="p-2 hover:bg-gray-700 transition-colors duration-200">
-        <a [routerLink]="route.path" class="flex items-center text-white">
-          <span class="mr-2">
-            <!-- Optional Icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 12h18M3 6h18M3 18h18"
-              />
-            </svg>
-          </span>
-          {{ route.path }}
+      <li
+        class="px-2 py-3 hover:bg-green-600 rounded-md mx-2 transition-colors duration-200"
+      >
+        <a [routerLink]="route.path" class="flex items-center">
+          <span class="text-lg font-bold">{{ route.path }}</span>
         </a>
       </li>
       }
     </ul>
   </div>
 
-  <div class="flex-1 p-4 ml-64 md:ml-0">
+  <!-- Main Content -->
+  <div class="flex-1 p-6 bg-white shadow-inner">
     <router-outlet></router-outlet>
   </div>
 </div>
