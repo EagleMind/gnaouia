@@ -145,7 +145,13 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
   openDialog(Merchandise?: Merchandise): void {
     const dialogRef = this.dialog.open(MerchandiseDialogComponent, {
       width: '400px',
-      data: Merchandise || { name: '', url: '', dateFrom: '', dateTo: '' },
+      data: Merchandise || {
+        name: '',
+        url: '',
+        originalPrice: 0,
+        discount: 0,
+        pictureUrl: '',
+      },
     });
 
     this.subscriptions.push(
