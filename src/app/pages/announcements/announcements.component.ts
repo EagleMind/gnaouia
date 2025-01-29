@@ -1,25 +1,31 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import moment from 'moment';
 import { ColDef, GridOptions } from 'ag-grid-community';
-
+import { ModuleRegistry } from '@ag-grid-community/core'; // Import ModuleRegistry
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AnnouncementDialogComponent } from './announcements-modal/modal.component';
 import {
   Announcement,
   AnnouncementsResponse,
-} from '../../../models/announcements.model';
-import { AnnouncementService } from '../../../_services/announcements';
-import { EventBusService } from '../../../_services/event-bus.service';
+} from '../../models/announcements.model';
+import { AnnouncementService } from '../../_services/announcements';
+import { EventBusService } from '../../_services/event-bus.service';
 import { ActionCellRendererComponent } from './render-button/render-buttons.component';
+import { AgGridModule } from 'ag-grid-angular'; // Import AgGridModule
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-announcements',
   templateUrl: './announcements.component.html',
   styleUrls: ['./announcements.component.css'],
+  standalone: true,
+  imports: [CommonModule, AgGridModule],
 })
+@Injectable()
 export class AnnouncementsComponent implements OnInit, OnDestroy {
   announcements: Announcement[] = [];
   totalElements = 0;

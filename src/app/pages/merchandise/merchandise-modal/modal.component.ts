@@ -24,8 +24,8 @@ import {
   FontAwesomeModule,
 } from '@fortawesome/angular-fontawesome';
 import { faPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { EventBusService } from '../../../../_services/event-bus.service';
-import { AnnouncementService } from '../../../../_services/announcements';
+import { EventBusService } from '../../../_services/event-bus.service';
+import { MerchandiseService } from '../../../_services/merchandise';
 
 @Component({
   selector: 'app-announcement-dialog',
@@ -45,7 +45,7 @@ import { AnnouncementService } from '../../../../_services/announcements';
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnnouncementDialogComponent implements OnInit {
+export class MerchandiseDialogComponent implements OnInit {
   faPlus = faPlus;
   faCheck = faCheck;
   selectedFile: File | null = null;
@@ -55,8 +55,8 @@ export class AnnouncementDialogComponent implements OnInit {
 
   constructor(
     private eventBusService: EventBusService,
-    private announcementService: AnnouncementService,
-    public dialogRef: MatDialogRef<AnnouncementDialogComponent>,
+    private merchandiseService: MerchandiseService,
+    public dialogRef: MatDialogRef<MerchandiseDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.form = new FormGroup({
@@ -94,7 +94,7 @@ export class AnnouncementDialogComponent implements OnInit {
 
   onSave(): void {
     if (this.isDeleteMode) {
-      this.deleteAnnouncement();
+      this.deleteMerchant();
     } else {
       this.isEditMode ? this.updateAnnouncement() : this.createAnnouncement();
     }
@@ -102,7 +102,7 @@ export class AnnouncementDialogComponent implements OnInit {
 
   private createAnnouncement(): void {
     const formData = this.prepareFormData();
-    this.announcementService.createAnnouncement(formData).subscribe({
+    this.merchandiseService.createMerchandise(formData).subscribe({
       next: () => {
         this.dialogRef.close(true);
         this.eventBusService.emit('announcement-change');
@@ -113,25 +113,23 @@ export class AnnouncementDialogComponent implements OnInit {
 
   updateAnnouncement(): void {
     const formData = this.prepareFormData();
-    this.announcementService
-      .updateAnnouncement(this.data.id, formData)
+    this.merchandiseService
+      .updateMerchandise(this.data.id, formData)
       .subscribe({
         next: () => {
           this.dialogRef.close(true);
           this.eventBusService.emit('announcement-change');
         },
-        error: (err) => console.error('Failed to update announcement', err),
       });
   }
 
-  deleteAnnouncement(): void {
+  deleteMerchant(): void {
     console.log('deleteAnnouncement');
-    this.announcementService.deleteAnnouncement(this.data.id).subscribe({
+    this.merchandiseService.deleteMerchandise(this.data.id).subscribe({
       next: () => {
         this.dialogRef.close(true);
         this.eventBusService.emit('announcement-change');
       },
-      error: (err) => console.error('Failed to delete announcement', err),
     });
   }
 
@@ -139,17 +137,13 @@ export class AnnouncementDialogComponent implements OnInit {
     const formData = new FormData();
     formData.append('name', this.form.value.name);
     formData.append('url', this.form.value.url);
-    formData.append('dateFrom', this.formatDate(this.form.value.dateFrom));
-    formData.append('dateTo', this.formatDate(this.form.value.dateTo));
+    formData.append('originalPrice', this.form.value.originalPrice);
+    formData.append('discount', this.form.value.discount);
 
     if (this.selectedFile) {
       formData.append('picture', this.selectedFile, this.selectedFile.name);
     }
 
     return formData;
-  }
-
-  private formatDate(date: Date): string {
-    return date ? new Date(date).toISOString() : '';
   }
 }

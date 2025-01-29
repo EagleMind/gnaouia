@@ -13,7 +13,7 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  private hasTokenAndValid(): boolean {
+  public hasTokenAndValid(): boolean {
     const token = localStorage.getItem('jwtToken');
     if (token) {
       const expiry = JSON.parse(atob(token.split('.')[1])).exp;

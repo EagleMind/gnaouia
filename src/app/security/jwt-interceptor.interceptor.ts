@@ -8,7 +8,6 @@ interface DecodedToken {
 
 export const jwtInterceptorInterceptor: HttpInterceptorFn = (req, next) => {
   let token: string | null = localStorage.getItem('jwtToken');
-
   if (token) {
     try {
       const decodedToken: DecodedToken = jwtDecode<DecodedToken>(token);

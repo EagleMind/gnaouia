@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Route, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { routes } from '../../home/home-routing.module';
+import { routes } from '../../../app.routes';
+import { AuthService } from '../../../_services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,18 +14,16 @@ import { routes } from '../../home/home-routing.module';
 export class SidebarComponent implements OnInit {
   routes: any = [];
   isOpen = false;
-  constructor() {}
+  isLoggedIn = false;
+  constructor(private AuthService: AuthService) {}
   ngOnInit(): void {
     this.routes = this.getRoutes();
+    if (this.AuthService.isLoggedIn.value) {
+      this.isLoggedIn = true;
+    }
   }
   getRoutes() {
-    for (const route of routes) {
-      if (route.children) {
-        this.routes.push(...route.children);
-      }
-    }
-
-    return this.routes;
+    return routes.filter((route) => route?.data?.['title']); // Returns only routes with a title
   }
   toggleSidebar() {
     this.isOpen = !this.isOpen;

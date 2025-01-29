@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { Announcement } from '../../../../models/announcements.model';
-import { AnnouncementDialogComponent } from '../announcements-modal/modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MerchandiseDialogComponent } from '../merchandise-modal/modal.component';
+import { Merchandise } from '../../../models/merchandise.model';
 @Component({
   selector: 'app-render-buttons',
   standalone: true,
@@ -17,7 +17,7 @@ export class ActionCellRendererComponent implements ICellRendererAngularComp {
   faPen = faPen;
   faTrash = faTrash;
   componentParent: any;
-  selectedAnnouncementId: string | null = null;
+  selectedMerchantId: string | null = null;
   constructor(private dialog: MatDialog) {}
   agInit(params: any): void {
     this.params = params;
@@ -42,9 +42,9 @@ export class ActionCellRendererComponent implements ICellRendererAngularComp {
   //     console.error('openDialog method not found in the context');
   //   }
   // }
-  openDialog(announcement?: Announcement, isDelete?: boolean): void {
+  openDialog(announcement?: Merchandise, isDelete?: boolean): void {
     console.log(isDelete);
-    const dialogRef = this.dialog.open(AnnouncementDialogComponent, {
+    const dialogRef = this.dialog.open(MerchandiseDialogComponent, {
       width: '400px',
       data: {
         id: announcement,
@@ -58,8 +58,8 @@ export class ActionCellRendererComponent implements ICellRendererAngularComp {
 
     dialogRef.afterClosed().subscribe((result) => {});
   }
-  deleteAnnouncement(id: string): void {
-    this.selectedAnnouncementId = id;
+  deleteMerchant(id: string): void {
+    this.selectedMerchantId = id;
     const modal = document.getElementById('popup-modal');
     if (modal) {
       modal.classList.toggle('hidden');
