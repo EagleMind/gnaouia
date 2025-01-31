@@ -32,7 +32,7 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
   pageSize = 10;
   gridApi: any;
   @Input() merchandiseId = '';
-  private subscriptions: Subscription[] = [];
+  readonly subscriptions: Subscription[] = [];
 
   columnDefs: ColDef<Merchandise>[] = [];
   gridOptions: GridOptions = {
@@ -47,11 +47,11 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
   };
 
   constructor(
-    private dialog: MatDialog,
-    private merchandiseService: MerchandiseService,
-    private snackBar: MatSnackBar,
-    private eventBus: EventBusService,
-    private breakpointObserver: BreakpointObserver
+    readonly dialog: MatDialog,
+    readonly merchandiseService: MerchandiseService,
+    readonly snackBar: MatSnackBar,
+    readonly eventBus: EventBusService,
+    readonly breakpointObserver: BreakpointObserver
   ) {}
 
   ngOnInit(): void {
@@ -76,7 +76,7 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
-  private initializeGridColumns(): void {
+  initializeGridColumns(): void {
     this.columnDefs = [
       {
         headerName: 'Name',
@@ -116,7 +116,7 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
     ];
   }
 
-  private adjustColumnsForSmallScreens(): void {
+  adjustColumnsForSmallScreens(): void {
     this.columnDefs = this.columnDefs.map((col) => ({
       ...col,
       hide: col.field !== 'name', // Show only "Name" for smaller screens
@@ -153,49 +153,14 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
         pictureUrl: '',
       },
     });
-
-    this.subscriptions.push(
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          result.id
-            ? this.updateMerchandise(result)
-            : this.createMerchandise(result);
-        }
-      })
-    );
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadMerchandises();
+      }
+    });
   }
 
-  private updateMerchandise(updatedMerchandise: Merchandise): void {
-    this.subscriptions.push(
-      this.merchandiseService
-        .updateMerchandise(updatedMerchandise.id, updatedMerchandise)
-        .subscribe({
-          next: () => {
-            this.loadMerchandises();
-            this.snackBar.open('Merchandise updated successfully', 'Close', {
-              duration: 3000,
-            });
-          },
-          error: () => this.showError('Error updating Merchandise'),
-        })
-    );
-  }
-
-  private createMerchandise(newMerchandise: FormData): void {
-    this.subscriptions.push(
-      this.merchandiseService.createMerchandise(newMerchandise).subscribe({
-        next: () => {
-          this.loadMerchandises();
-          this.snackBar.open('Merchandise created successfully', 'Close', {
-            duration: 3000,
-          });
-        },
-        error: () => this.showError('Error creating Merchandise'),
-      })
-    );
-  }
-
-  private manageEvents(): void {
+  manageEvents(): void {
     this.subscriptions.push(
       this.eventBus.events$.subscribe((event) => {
         if (event === 'Merchandise-change') {
@@ -205,14 +170,11 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
     );
   }
 
-  private formatDate(
-    date: string | Date,
-    format: string = 'MMMM Do YYYY'
-  ): string {
+  formatDate(date: string | Date, format: string = 'MMMM Do YYYY'): string {
     return moment(date).format(format);
   }
 
-  private showError(message: string): void {
+  showError(message: string): void {
     this.snackBar.open(message, 'Close', { duration: 3000 });
   }
 }

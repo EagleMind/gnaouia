@@ -54,26 +54,22 @@ export class MerchandiseDialogComponent implements OnInit {
   isDeleteMode: boolean = false;
 
   constructor(
-    private eventBusService: EventBusService,
-    private merchandiseService: MerchandiseService,
+    readonly eventBusService: EventBusService,
+    readonly merchandiseService: MerchandiseService,
     public dialogRef: MatDialogRef<MerchandiseDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.form = new FormGroup({
       name: new FormControl(data?.name || '', [Validators.required]),
       url: new FormControl(data?.url || '', [Validators.required]),
-      dateFrom: new FormControl(data?.dateFrom || null),
-      dateTo: new FormControl(data?.dateTo || null),
+      originalPrice: new FormControl(data?.originalPrice || null),
+      discount: new FormControl(data?.discount || null),
       pictureUrl: new FormControl(data?.pictureUrl || null),
     });
-    this.isEditMode = !!data?.id; // Set edit mode if ID exists
-    this.isDeleteMode = data?.isDelete; // Check if it's for deletion
+    this.isEditMode = !!this.data.id && !this.data?.isDelete; // Ensures edit mode is only set if not in delete mode
+    this.isDeleteMode = !!this.data?.isDelete; // Ensures delete mode is properly set
   }
-
-  ngOnInit(): void {
-    console.log(this.data);
-  }
-
+  ngOnInit(): void {}
   onImageChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -91,16 +87,19 @@ export class MerchandiseDialogComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close();
   }
+  onSave(event: Event): void {
+    event.preventDefault(); // Prevents form from triggering multiple actions
 
-  onSave(): void {
     if (this.isDeleteMode) {
       this.deleteMerchant();
+    } else if (this.isEditMode) {
+      this.updateAnnouncement();
     } else {
-      this.isEditMode ? this.updateAnnouncement() : this.createAnnouncement();
+      this.createAnnouncement();
     }
   }
 
-  private createAnnouncement(): void {
+  createAnnouncement(): void {
     const formData = this.prepareFormData();
     this.merchandiseService.createMerchandise(formData).subscribe({
       next: () => {
@@ -124,16 +123,15 @@ export class MerchandiseDialogComponent implements OnInit {
   }
 
   deleteMerchant(): void {
-    console.log('deleteAnnouncement');
     this.merchandiseService.deleteMerchandise(this.data.id).subscribe({
       next: () => {
         this.dialogRef.close(true);
-        this.eventBusService.emit('announcement-change');
+        this.eventBusService.emit('Merchandise-change');
       },
     });
   }
 
-  private prepareFormData(): FormData {
+  prepareFormData(): FormData {
     const formData = new FormData();
     formData.append('name', this.form.value.name);
     formData.append('url', this.form.value.url);

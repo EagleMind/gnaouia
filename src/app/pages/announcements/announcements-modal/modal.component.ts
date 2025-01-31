@@ -13,7 +13,12 @@ import {
   ReactiveFormsModule,
   FormsModule,
 } from '@angular/forms';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import moment from 'moment';
+import { DateAdapter } from '@angular/material/core';
+import {
+  MAT_DATE_LOCALE,
+  provideNativeDateAdapter,
+} from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -42,7 +47,10 @@ import { AnnouncementService } from '../../../_services/announcements';
     ReactiveFormsModule,
     FontAwesomeModule,
   ],
-  providers: [provideNativeDateAdapter()],
+  providers: [
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnnouncementDialogComponent implements OnInit {
@@ -54,11 +62,13 @@ export class AnnouncementDialogComponent implements OnInit {
   isDeleteMode: boolean = false;
 
   constructor(
+    private dateAdapter: DateAdapter<Date>,
     private eventBusService: EventBusService,
     private announcementService: AnnouncementService,
     public dialogRef: MatDialogRef<AnnouncementDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    this.dateAdapter.setLocale('en-GB');
     this.form = new FormGroup({
       name: new FormControl(data?.name || '', [Validators.required]),
       url: new FormControl(data?.url || '', [Validators.required]),
@@ -111,8 +121,9 @@ export class AnnouncementDialogComponent implements OnInit {
     });
   }
 
-  updateAnnouncement(): void {
+  private updateAnnouncement(): void {
     const formData = this.prepareFormData();
+    console.log('FORM DATA', formData);
     this.announcementService
       .updateAnnouncement(this.data.id, formData)
       .subscribe({
@@ -124,8 +135,7 @@ export class AnnouncementDialogComponent implements OnInit {
       });
   }
 
-  deleteAnnouncement(): void {
-    console.log('deleteAnnouncement');
+  private deleteAnnouncement(): void {
     this.announcementService.deleteAnnouncement(this.data.id).subscribe({
       next: () => {
         this.dialogRef.close(true);
@@ -137,11 +147,11 @@ export class AnnouncementDialogComponent implements OnInit {
 
   private prepareFormData(): FormData {
     const formData = new FormData();
+    console.log('FORM', moment(this.form.value.dateFrom).format('L'));
     formData.append('name', this.form.value.name);
     formData.append('url', this.form.value.url);
     formData.append('dateFrom', this.formatDate(this.form.value.dateFrom));
     formData.append('dateTo', this.formatDate(this.form.value.dateTo));
-
     if (this.selectedFile) {
       formData.append('picture', this.selectedFile, this.selectedFile.name);
     }
@@ -149,7 +159,7 @@ export class AnnouncementDialogComponent implements OnInit {
     return formData;
   }
 
-  private formatDate(date: Date): string {
-    return date ? new Date(date).toISOString() : '';
+  private formatDate(date: string): string {
+    return date ? moment(this.form.value.dateFrom).format('L') : '';
   }
 }

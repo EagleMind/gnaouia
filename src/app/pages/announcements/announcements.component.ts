@@ -33,7 +33,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   pageSize = 10;
   gridApi: any;
   @Input() announcementId = '';
-  private subscriptions: Subscription[] = [];
+  readonly subscriptions: Subscription[] = [];
 
   columnDefs: ColDef<Announcement>[] = [];
   gridOptions: GridOptions = {
@@ -48,11 +48,11 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   };
 
   constructor(
-    private dialog: MatDialog,
-    private announcementService: AnnouncementService,
-    private snackBar: MatSnackBar,
-    private eventBus: EventBusService,
-    private breakpointObserver: BreakpointObserver
+    readonly dialog: MatDialog,
+    readonly announcementService: AnnouncementService,
+    readonly snackBar: MatSnackBar,
+    readonly eventBus: EventBusService,
+    readonly breakpointObserver: BreakpointObserver
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +77,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
-  private initializeGridColumns(): void {
+  initializeGridColumns(): void {
     this.columnDefs = [
       {
         headerName: 'Name',
@@ -117,7 +117,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     ];
   }
 
-  private adjustColumnsForSmallScreens(): void {
+  adjustColumnsForSmallScreens(): void {
     this.columnDefs = this.columnDefs.map((col) => ({
       ...col,
       hide: col.field !== 'name', // Show only "Name" for smaller screens
@@ -148,49 +148,14 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
       width: '400px',
       data: announcement || { name: '', url: '', dateFrom: '', dateTo: '' },
     });
-
-    this.subscriptions.push(
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          result.id
-            ? this.updateAnnouncement(result)
-            : this.createAnnouncement(result);
-        }
-      })
-    );
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadAnnouncements();
+      }
+    });
   }
 
-  private updateAnnouncement(updatedAnnouncement: Announcement): void {
-    this.subscriptions.push(
-      this.announcementService
-        .updateAnnouncement(updatedAnnouncement.id, updatedAnnouncement)
-        .subscribe({
-          next: () => {
-            this.loadAnnouncements();
-            this.snackBar.open('Announcement updated successfully', 'Close', {
-              duration: 3000,
-            });
-          },
-          error: () => this.showError('Error updating announcement'),
-        })
-    );
-  }
-
-  private createAnnouncement(newAnnouncement: FormData): void {
-    this.subscriptions.push(
-      this.announcementService.createAnnouncement(newAnnouncement).subscribe({
-        next: () => {
-          this.loadAnnouncements();
-          this.snackBar.open('Announcement created successfully', 'Close', {
-            duration: 3000,
-          });
-        },
-        error: () => this.showError('Error creating announcement'),
-      })
-    );
-  }
-
-  private manageEvents(): void {
+  manageEvents(): void {
     this.subscriptions.push(
       this.eventBus.events$.subscribe((event) => {
         if (event === 'announcement-change') {
@@ -200,14 +165,11 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     );
   }
 
-  private formatDate(
-    date: string | Date,
-    format: string = 'MMMM Do YYYY'
-  ): string {
+  formatDate(date: string | Date, format: string = 'MMMM Do YYYY'): string {
     return moment(date).format(format);
   }
 
-  private showError(message: string): void {
+  showError(message: string): void {
     this.snackBar.open(message, 'Close', { duration: 3000 });
   }
 }
