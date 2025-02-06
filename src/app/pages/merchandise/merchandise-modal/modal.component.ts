@@ -28,22 +28,21 @@ import { EventBusService } from '../../../_services/event-bus.service';
 import { MerchandiseService } from '../../../_services/merchandise';
 
 @Component({
-  selector: 'app-announcement-dialog',
-  templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.css'],
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatButtonModule,
-    CommonModule,
-    ReactiveFormsModule,
-    FontAwesomeModule,
-  ],
-  providers: [provideNativeDateAdapter()],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-announcement-dialog',
+    templateUrl: './modal.component.html',
+    styleUrls: ['./modal.component.css'],
+    imports: [
+        FormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatDatepickerModule,
+        MatButtonModule,
+        CommonModule,
+        ReactiveFormsModule,
+        FontAwesomeModule,
+    ],
+    providers: [provideNativeDateAdapter()],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MerchandiseDialogComponent implements OnInit {
   faPlus = faPlus;

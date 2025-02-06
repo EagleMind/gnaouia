@@ -5,11 +5,10 @@ import { routes } from '../../../app.routes';
 import { AuthService } from '../../../_services/auth.service';
 
 @Component({
-  selector: 'app-sidebar',
-  templateUrl: './sidebar.component.html',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  styleUrls: ['./sidebar.component.css'],
+    selector: 'app-sidebar',
+    templateUrl: './sidebar.component.html',
+    imports: [CommonModule, RouterModule],
+    styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
   routes: any = [];

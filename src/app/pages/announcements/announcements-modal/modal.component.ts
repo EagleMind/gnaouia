@@ -33,25 +33,24 @@ import { EventBusService } from '../../../_services/event-bus.service';
 import { AnnouncementService } from '../../../_services/announcements';
 
 @Component({
-  selector: 'app-announcement-dialog',
-  templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.css'],
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatButtonModule,
-    CommonModule,
-    ReactiveFormsModule,
-    FontAwesomeModule,
-  ],
-  providers: [
-    provideNativeDateAdapter(),
-    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-announcement-dialog',
+    templateUrl: './modal.component.html',
+    styleUrls: ['./modal.component.css'],
+    imports: [
+        FormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatDatepickerModule,
+        MatButtonModule,
+        CommonModule,
+        ReactiveFormsModule,
+        FontAwesomeModule,
+    ],
+    providers: [
+        provideNativeDateAdapter(),
+        { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnnouncementDialogComponent implements OnInit {
   faPlus = faPlus;

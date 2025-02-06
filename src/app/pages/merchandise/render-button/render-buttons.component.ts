@@ -6,11 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MerchandiseDialogComponent } from '../merchandise-modal/modal.component';
 import { Merchandise } from '../../../models/merchandise.model';
 @Component({
-  selector: 'app-render-buttons',
-  standalone: true,
-  imports: [FontAwesomeModule],
-  templateUrl: './render-buttons.component.html',
-  styleUrl: './render-buttons.component.css',
+    selector: 'app-render-buttons',
+    imports: [FontAwesomeModule],
+    templateUrl: './render-buttons.component.html',
+    styleUrl: './render-buttons.component.css'
 })
 export class ActionCellRendererComponent implements ICellRendererAngularComp {
   params!: any;

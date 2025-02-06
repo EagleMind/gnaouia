@@ -13,12 +13,10 @@ import {
 ModuleRegistry.registerModules([AllCommunityModule]);
 provideGlobalGridOptions({ theme: 'legacy' });
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, SidebarComponent, CommonModule, AgGridModule],
-
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+    selector: 'app-root',
+    imports: [RouterOutlet, SidebarComponent, CommonModule, AgGridModule],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.css'
 })
 export class AppComponent {
   isLoggedIn: boolean | null = null;

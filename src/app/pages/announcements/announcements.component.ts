@@ -19,11 +19,10 @@ import { AgGridModule } from 'ag-grid-angular'; // Import AgGridModule
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-announcements',
-  templateUrl: './announcements.component.html',
-  styleUrls: ['./announcements.component.css'],
-  standalone: true,
-  imports: [CommonModule, AgGridModule],
+    selector: 'app-announcements',
+    templateUrl: './announcements.component.html',
+    styleUrls: ['./announcements.component.css'],
+    imports: [CommonModule, AgGridModule]
 })
 @Injectable()
 export class AnnouncementsComponent implements OnInit, OnDestroy {

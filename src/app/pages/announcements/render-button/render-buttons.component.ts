@@ -6,11 +6,10 @@ import { AnnouncementDialogComponent } from '../announcements-modal/modal.compon
 import { MatDialog } from '@angular/material/dialog';
 import { Announcement } from '../../../models/announcements.model';
 @Component({
-  selector: 'app-render-buttons',
-  standalone: true,
-  imports: [FontAwesomeModule],
-  templateUrl: './render-buttons.component.html',
-  styleUrl: './render-buttons.component.css',
+    selector: 'app-render-buttons',
+    imports: [FontAwesomeModule],
+    templateUrl: './render-buttons.component.html',
+    styleUrl: './render-buttons.component.css'
 })
 export class ActionCellRendererComponent implements ICellRendererAngularComp {
   params!: any;

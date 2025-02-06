@@ -18,11 +18,10 @@ import { CommonModule } from '@angular/common';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
 
 @Component({
-  selector: 'app-merchandise',
-  templateUrl: './merchandise.component.html',
-  styleUrls: ['./merchandise.component.css'],
-  standalone: true,
-  imports: [CommonModule, AgGridModule, AgGridAngular],
+    selector: 'app-merchandise',
+    templateUrl: './merchandise.component.html',
+    styleUrls: ['./merchandise.component.css'],
+    imports: [CommonModule, AgGridModule, AgGridAngular]
 })
 @Injectable()
 export class MerchandiseComponent implements OnInit, OnDestroy {
