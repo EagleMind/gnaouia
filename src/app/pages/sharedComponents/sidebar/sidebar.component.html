@@ -1,4 +1,4 @@
-<!-- Sidebar -->
+@if(isLoggedIn) {
 <button
   (click)="toggleSidebar()"
   class="p-2 text-gray-700 md:hidden flex left-2 z-50 w-full"
@@ -39,7 +39,7 @@
         class="px-2 py-3 hover:bg-green-600 rounded-md mx-2 transition-colors duration-200"
       >
         <a [routerLink]="route.path" class="flex items-center">
-          <span class="text-lg font-bold">{{ route.path }}</span>
+          <span class="text-lg font-bold capitalize">{{ route.path }}</span>
         </a>
       </li>
       }
@@ -51,3 +51,4 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+}

@@ -24,8 +24,8 @@ import {
   FontAwesomeModule,
 } from '@fortawesome/angular-fontawesome';
 import { faPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { EventBusService } from '../../../../_services/event-bus.service';
-import { AnnouncementService } from '../../../../_services/announcements';
+import { EventBusService } from '../../../_services/event-bus.service';
+import { MerchandiseService } from '../../../_services/merchandise';
 
 @Component({
   selector: 'app-announcement-dialog',
@@ -45,7 +45,7 @@ import { AnnouncementService } from '../../../../_services/announcements';
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnnouncementDialogComponent implements OnInit {
+export class MerchandiseDialogComponent implements OnInit {
   faPlus = faPlus;
   faCheck = faCheck;
   selectedFile: File | null = null;
@@ -54,26 +54,22 @@ export class AnnouncementDialogComponent implements OnInit {
   isDeleteMode: boolean = false;
 
   constructor(
-    private eventBusService: EventBusService,
-    private announcementService: AnnouncementService,
-    public dialogRef: MatDialogRef<AnnouncementDialogComponent>,
+    readonly eventBusService: EventBusService,
+    readonly merchandiseService: MerchandiseService,
+    public dialogRef: MatDialogRef<MerchandiseDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.form = new FormGroup({
       name: new FormControl(data?.name || '', [Validators.required]),
       url: new FormControl(data?.url || '', [Validators.required]),
-      dateFrom: new FormControl(data?.dateFrom || null),
-      dateTo: new FormControl(data?.dateTo || null),
+      originalPrice: new FormControl(data?.originalPrice || null),
+      discount: new FormControl(data?.discount || null),
       pictureUrl: new FormControl(data?.pictureUrl || null),
     });
-    this.isEditMode = !!data?.id; // Set edit mode if ID exists
-    this.isDeleteMode = data?.isDelete; // Check if it's for deletion
+    this.isEditMode = !!this.data.id && !this.data?.isDelete; // Ensures edit mode is only set if not in delete mode
+    this.isDeleteMode = !!this.data?.isDelete; // Ensures delete mode is properly set
   }
-
-  ngOnInit(): void {
-    console.log(this.data);
-  }
-
+  ngOnInit(): void {}
   onImageChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -91,18 +87,21 @@ export class AnnouncementDialogComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close();
   }
+  onSave(event: Event): void {
+    event.preventDefault(); // Prevents form from triggering multiple actions
 
-  onSave(): void {
     if (this.isDeleteMode) {
-      this.deleteAnnouncement();
+      this.deleteMerchant();
+    } else if (this.isEditMode) {
+      this.updateAnnouncement();
     } else {
-      this.isEditMode ? this.updateAnnouncement() : this.createAnnouncement();
+      this.createAnnouncement();
     }
   }
 
-  private createAnnouncement(): void {
+  createAnnouncement(): void {
     const formData = this.prepareFormData();
-    this.announcementService.createAnnouncement(formData).subscribe({
+    this.merchandiseService.createMerchandise(formData).subscribe({
       next: () => {
         this.dialogRef.close(true);
         this.eventBusService.emit('announcement-change');
@@ -113,43 +112,36 @@ export class AnnouncementDialogComponent implements OnInit {
 
   updateAnnouncement(): void {
     const formData = this.prepareFormData();
-    this.announcementService
-      .updateAnnouncement(this.data.id, formData)
+    this.merchandiseService
+      .updateMerchandise(this.data.id, formData)
       .subscribe({
         next: () => {
           this.dialogRef.close(true);
           this.eventBusService.emit('announcement-change');
         },
-        error: (err) => console.error('Failed to update announcement', err),
       });
   }
 
-  deleteAnnouncement(): void {
-    console.log('deleteAnnouncement');
-    this.announcementService.deleteAnnouncement(this.data.id).subscribe({
+  deleteMerchant(): void {
+    this.merchandiseService.deleteMerchandise(this.data.id).subscribe({
       next: () => {
         this.dialogRef.close(true);
-        this.eventBusService.emit('announcement-change');
+        this.eventBusService.emit('Merchandise-change');
       },
-      error: (err) => console.error('Failed to delete announcement', err),
     });
   }
 
-  private prepareFormData(): FormData {
+  prepareFormData(): FormData {
     const formData = new FormData();
     formData.append('name', this.form.value.name);
     formData.append('url', this.form.value.url);
-    formData.append('dateFrom', this.formatDate(this.form.value.dateFrom));
-    formData.append('dateTo', this.formatDate(this.form.value.dateTo));
+    formData.append('originalPrice', this.form.value.originalPrice);
+    formData.append('discount', this.form.value.discount);
 
     if (this.selectedFile) {
       formData.append('picture', this.selectedFile, this.selectedFile.name);
     }
 
     return formData;
-  }
-
-  private formatDate(date: Date): string {
-    return date ? new Date(date).toISOString() : '';
   }
 }

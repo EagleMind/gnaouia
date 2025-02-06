@@ -3,14 +3,14 @@
   (click)="openDialog()"
   class="px-3 my-3 py-1.5 text-sm font-medium text-accent border rounded-md hover:bg-green-400 focus:ring-2 focus:ring-gray-300 transition bg-primary"
 >
-  Create Announcement
+  Create Merchandise
 </button>
 <ag-grid-angular
   class="ag-theme-alpine"
-  [rowData]="announcements"
+  [rowData]="merchandise"
   [columnDefs]="columnDefs"
   [pagination]="true"
-  [paginationPageSize]="10"
+  [paginationPageSize]="20"
   [domLayout]="'autoHeight'"
   (gridReady)="onGridReady($event)"
   [gridOptions]="gridOptions"
