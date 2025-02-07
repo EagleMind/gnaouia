@@ -26,7 +26,7 @@ export class MerchandiseService {
 
   createMerchandise(Merchandise: FormData): Observable<Merchandise> {
     return this.http.post<Merchandise>(
-      `${this.apiUrl}/merchandise/create`,
+      `${this.apiUrl}/merchandise/save`,
       Merchandise
     );
   }

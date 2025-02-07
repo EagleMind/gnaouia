@@ -2,8 +2,9 @@ export interface Article {
   id: string;
   title: string;
   url: string;
-  text: number;
-  category: number;
+  text: string;
+  category: string;
+  picture: string | null;
 }
 
 interface Sort {

@@ -1,0 +1,55 @@
+<button
+  type="button"
+  (click)="goBack()"
+  class="w-12 p-3 my-5 bg-primary text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
+>
+  <fa-icon [icon]="faArrowAltCircleLeft"></fa-icon>
+</button>
+<!-- Form Section -->
+
+<form [formGroup]="form" (ngSubmit)="saveArticle()" class="max-w-2xl space-y-6">
+  <input
+    formControlName="title"
+    placeholder="Title"
+    class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+  />
+  <!-- Category Dropdown -->
+  <select
+    formControlName="category"
+    class="w-full p-2 border border-gray-300 rounded-md"
+  >
+    <option value="" disabled>Select Category</option>
+    @for(category of categories; track category) {
+    <option [value]="category">
+      {{ category }}
+    </option>
+    }
+  </select>
+
+  <input
+    formControlName="url"
+    placeholder="URL"
+    class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+  />
+  <input
+    type="file"
+    (change)="onFileChange($event)"
+    class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+  />
+  <div class="w-full space-y-6">
+    <!-- Editor Section -->
+    <div class="NgxEditor__Wrapper space-y-4">
+      <ngx-editor-menu [editor]="editor"></ngx-editor-menu>
+      <ngx-editor
+        [editor]="editor"
+        formControlName="editorContent"
+      ></ngx-editor>
+    </div>
+    <button
+      type="submit"
+      class="w-fit p-3 bg-primary text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
+    >
+      Save Article
+    </button>
+  </div>
+</form>

@@ -3,37 +3,36 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import moment from 'moment';
 import { ColDef, GridOptions } from 'ag-grid-community';
-import { AnnouncementDialogComponent } from './announcements-modal/modal.component';
-import {
-  Announcement,
-  AnnouncementsResponse,
-} from '../../models/announcements.model';
-import { AnnouncementService } from '../../_services/announcements';
-import { EventBusService } from '../../_services/event-bus.service';
-import { ActionCellRendererComponent } from './render-button/render-buttons.component';
-import { AgGridModule } from 'ag-grid-angular'; // Import AgGridModule
-import { CommonModule } from '@angular/common';
 
+import { EventBusService } from '../../_services/event-bus.service';
+import { AgGridModule } from 'ag-grid-angular';
+import { CommonModule } from '@angular/common';
+import { Article, ArticleResponse } from '../../models/articles.model';
+import { ArticleService } from '../../_services/articles.service';
+import { ActionCellRendererComponent } from './render-button/render-buttons.component';
+import { Router } from '@angular/router';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 @Component({
-  selector: 'app-announcements',
-  templateUrl: './announcements.component.html',
-  styleUrls: ['./announcements.component.css'],
+  selector: 'app-article',
+  templateUrl: './article.component.html',
+  styleUrls: ['./article.component.css'],
   standalone: true,
-  imports: [CommonModule, AgGridModule],
+  imports: [CommonModule, AgGridModule, FontAwesomeModule],
 })
 @Injectable()
-export class AnnouncementsComponent implements OnInit, OnDestroy {
-  announcements: Announcement[] = [];
+export class ArticleComponent implements OnInit, OnDestroy {
+  faPlus = faPlus;
+  articles: Article[] = [];
   totalElements = 0;
   currentPage = 0;
   pageSize = 10;
   gridApi: any;
-  @Input() announcementId = '';
+  @Input() articleId = '';
   readonly subscriptions: Subscription[] = [];
 
-  columnDefs: ColDef<Announcement>[] = [];
+  columnDefs: ColDef<Article>[] = [];
   gridOptions: GridOptions = {
     pagination: true,
     paginationPageSize: this.pageSize,
@@ -47,15 +46,16 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
 
   constructor(
     readonly dialog: MatDialog,
-    readonly announcementService: AnnouncementService,
+    readonly articleService: ArticleService,
     readonly snackBar: MatSnackBar,
     readonly eventBus: EventBusService,
-    readonly breakpointObserver: BreakpointObserver
+    readonly breakpointObserver: BreakpointObserver,
+    private router: Router // Injected Router for navigation
   ) {}
 
   ngOnInit(): void {
     this.initializeGridColumns();
-    this.loadAnnouncements();
+    this.loadArticles();
     this.manageEvents();
 
     this.subscriptions.push(
@@ -70,7 +70,9 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
         })
     );
   }
-
+  createArticle(): void {
+    this.router.navigate(['/articles/create']);
+  }
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
@@ -78,8 +80,8 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   initializeGridColumns(): void {
     this.columnDefs = [
       {
-        headerName: 'Name',
-        field: 'name',
+        headerName: 'Title',
+        field: 'title',
         sortable: true,
         filter: true,
         flex: 2,
@@ -92,19 +94,12 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
         flex: 2,
       },
       {
-        headerName: 'Date From',
-        field: 'dateFrom',
+        headerName: 'Category',
+        field: 'category',
         sortable: true,
         filter: true,
-        valueFormatter: (params) => this.formatDate(params.value),
       },
-      {
-        headerName: 'Date To',
-        field: 'dateTo',
-        sortable: true,
-        filter: true,
-        valueFormatter: (params) => this.formatDate(params.value),
-      },
+
       {
         headerName: 'Actions',
         cellRenderer: ActionCellRendererComponent,
@@ -118,53 +113,41 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   adjustColumnsForSmallScreens(): void {
     this.columnDefs = this.columnDefs.map((col) => ({
       ...col,
-      hide: col.field !== 'name', // Show only "Name" for smaller screens
+      hide: col.field !== 'title', // Show only "Title" for smaller screens
     }));
   }
 
   onGridReady(params: any): void {
     this.gridApi = params.api;
-    this.loadAnnouncements();
+    this.loadArticles();
   }
 
-  loadAnnouncements(): void {
+  loadArticles(): void {
     this.subscriptions.push(
-      this.announcementService
-        .getAllAnnouncements(this.currentPage, this.pageSize)
+      this.articleService
+        .getAllArticles(this.currentPage, this.pageSize)
         .subscribe({
-          next: (response: AnnouncementsResponse) => {
-            this.announcements = response.content;
+          next: (response: ArticleResponse) => {
+            this.articles = response.content;
             this.totalElements = response.totalElements;
           },
-          error: () => this.showError('Error loading announcements'),
+          error: () => this.showError('Error loading articles'),
         })
     );
   }
 
-  openDialog(announcement?: Announcement): void {
-    const dialogRef = this.dialog.open(AnnouncementDialogComponent, {
-      width: '400px',
-      data: announcement || { name: '', url: '', dateFrom: '', dateTo: '' },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadAnnouncements();
-      }
-    });
+  openArticle(article: Article): void {
+    this.router.navigate([`/article/details/${article.id}`, article.id]);
   }
 
   manageEvents(): void {
     this.subscriptions.push(
       this.eventBus.events$.subscribe((event) => {
         if (event === 'announcement-change') {
-          this.loadAnnouncements();
+          this.loadArticles();
         }
       })
     );
-  }
-
-  formatDate(date: string | Date, format: string = 'MMMM Do YYYY'): string {
-    return moment(date).format(format);
   }
 
   showError(message: string): void {

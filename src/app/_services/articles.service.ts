@@ -12,31 +12,38 @@ export class ArticleService {
   private apiUrl = environment.apiUrl; // Adjust the URL accordingly
 
   constructor(private http: HttpClient) {}
-  getAllMerchandise(page: number, size: number): Observable<ArticleResponse> {
+  getAllArticles(page: number, size: number): Observable<ArticleResponse> {
     return this.http.get<ArticleResponse>(
-      `${this.apiUrl}/article/all?page=${page}&size=${size}`
+      `${this.apiUrl}/article?page=${page}&size=${size}`
     );
   }
 
-  getMerchandiseById(id: string): Observable<Article> {
+  getArticleById(id: string): Observable<Article> {
     return this.http.get<Article>(`${this.apiUrl}/article/${id}`);
   }
 
-  createMerchandise(Merchandise: FormData): Observable<Article> {
+  createArticle(Merchandise: FormData): Observable<Article> {
     return this.http.post<Article>(
       `${this.apiUrl}/article/create`,
       Merchandise
     );
   }
 
-  updateMerchandise(id: string, Merchandise: any): Observable<Article> {
-    return this.http.put<Article>(
-      `${this.apiUrl}/article/edit/${id}`,
-      Merchandise
-    );
+  updateArticle(article: Article, file: File | null): Observable<Article> {
+    const formData = new FormData();
+    formData.append('id', article.id);
+    formData.append('title', article.title);
+    formData.append('text', article.text);
+    formData.append('category', article.category);
+    formData.append('url', article.url);
+    if (file) {
+      formData.append('file', file, file.name);
+    }
+
+    return this.http.put<Article>(`${this.apiUrl}/article/save`, formData);
   }
 
-  deleteMerchandise(id: string): Observable<void> {
+  deleteArticle(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/article/${id}`);
   }
 }
