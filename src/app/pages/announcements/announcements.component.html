@@ -1,9 +1,9 @@
 <button
   mat-button
   (click)="openDialog()"
-  class="px-3 my-3 py-1.5 text-sm font-medium text-accent border rounded-md hover:bg-green-400 focus:ring-2 focus:ring-gray-300 transition bg-primary"
+  class="w-fit flex space-x-2 p-3 my-5 bg-primary text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
 >
-  Create Announcement
+  <fa-icon [icon]="faPlus"></fa-icon><span> Create Announcement</span>
 </button>
 <ag-grid-angular
   class="ag-theme-alpine"

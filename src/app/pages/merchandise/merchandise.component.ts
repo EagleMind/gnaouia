@@ -16,16 +16,18 @@ import { MerchandiseService } from '../../_services/merchandise';
 import { EventBusService } from '../../_services/event-bus.service';
 import { CommonModule } from '@angular/common';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
-
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 @Component({
   selector: 'app-merchandise',
   templateUrl: './merchandise.component.html',
   styleUrls: ['./merchandise.component.css'],
   standalone: true,
-  imports: [CommonModule, AgGridModule, AgGridAngular],
+  imports: [CommonModule, AgGridModule, AgGridAngular, FontAwesomeModule],
 })
 @Injectable()
 export class MerchandiseComponent implements OnInit, OnDestroy {
+  faPlus = faPlus;
   merchandise: Merchandise[] = [];
   totalElements = 0;
   currentPage = 0;

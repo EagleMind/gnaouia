@@ -15,16 +15,18 @@ import { EventBusService } from '../../_services/event-bus.service';
 import { ActionCellRendererComponent } from './render-button/render-buttons.component';
 import { AgGridModule } from 'ag-grid-angular'; // Import AgGridModule
 import { CommonModule } from '@angular/common';
-
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 @Component({
   selector: 'app-announcements',
   templateUrl: './announcements.component.html',
   styleUrls: ['./announcements.component.css'],
   standalone: true,
-  imports: [CommonModule, AgGridModule],
+  imports: [CommonModule, AgGridModule, FontAwesomeModule],
 })
 @Injectable()
 export class AnnouncementsComponent implements OnInit, OnDestroy {
+  faPlus = faPlus;
   announcements: Announcement[] = [];
   totalElements = 0;
   currentPage = 0;
