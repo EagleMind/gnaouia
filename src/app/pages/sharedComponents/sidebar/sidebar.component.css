@@ -1,0 +1,4 @@
+.active-link {
+  background-color: #2f855a; /* Darker green for active state */
+  border-radius: 6px;
+}

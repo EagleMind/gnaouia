@@ -11,7 +11,6 @@ export const routes: Routes = [
     path: '',
     canActivate: [AuthGuard],
     component: AnnouncementsComponent,
-    data: { title: 'Home' },
   },
   {
     path: 'announcements',
