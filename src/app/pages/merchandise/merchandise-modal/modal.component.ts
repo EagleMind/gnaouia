@@ -4,6 +4,7 @@ import {
   Inject,
   Input,
   OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
@@ -23,7 +24,12 @@ import {
   FaIconLibrary,
   FontAwesomeModule,
 } from '@fortawesome/angular-fontawesome';
-import { faPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlus,
+  faCheck,
+  faTrash,
+  faXmarkCircle,
+} from '@fortawesome/free-solid-svg-icons';
 import { EventBusService } from '../../../_services/event-bus.service';
 import { MerchandiseService } from '../../../_services/merchandise';
 
@@ -45,9 +51,11 @@ import { MerchandiseService } from '../../../_services/merchandise';
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MerchandiseDialogComponent implements OnInit {
+export class MerchandiseDialogComponent {
   faPlus = faPlus;
   faCheck = faCheck;
+  faTrash = faTrash;
+  faXmarkCircle = faXmarkCircle;
   selectedFile: File | null = null;
   form: FormGroup;
   isEditMode: boolean = false;
@@ -57,19 +65,31 @@ export class MerchandiseDialogComponent implements OnInit {
     readonly eventBusService: EventBusService,
     readonly merchandiseService: MerchandiseService,
     public dialogRef: MatDialogRef<MerchandiseDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private cdRef: ChangeDetectorRef
   ) {
     this.form = new FormGroup({
-      name: new FormControl(data?.name || '', [Validators.required]),
+      name: new FormControl(data?.name || '', [
+        Validators.required,
+        Validators.pattern('^[a-zA-Z ]*$'),
+      ]),
       url: new FormControl(data?.url || '', [Validators.required]),
-      originalPrice: new FormControl(data?.originalPrice || null),
-      discount: new FormControl(data?.discount || null),
-      pictureUrl: new FormControl(data?.pictureUrl || null),
+      originalPrice: new FormControl(data?.originalPrice || null, [
+        Validators.required,
+        Validators.pattern('^[0-9]*$'),
+      ]),
+      discount: new FormControl(data?.discount || null, [
+        Validators.required,
+        Validators.pattern('^[0-9]*$'),
+      ]),
+      pictureUrl: new FormControl(data?.pictureUrl || null, [
+        Validators.required,
+      ]),
     });
-    this.isEditMode = !!this.data.id && !this.data?.isDelete; // Ensures edit mode is only set if not in delete mode
-    this.isDeleteMode = !!this.data?.isDelete; // Ensures delete mode is properly set
+    this.isEditMode = !!this.data.id && !this.data?.isDelete;
+    this.isDeleteMode = !!this.data?.isDelete;
   }
-  ngOnInit(): void {}
+
   onImageChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -78,17 +98,30 @@ export class MerchandiseDialogComponent implements OnInit {
 
       reader.onload = (e: any) => {
         this.data.pictureUrl = e.target.result;
+        this.form.patchValue({ pictureUrl: e.target.result });
+        this.cdRef.detectChanges();
       };
-
       reader.readAsDataURL(this.selectedFile);
     }
+  }
+
+  removeSelectedImage(): void {
+    this.selectedFile = null;
+    this.data.pictureUrl = null;
+    this.form.patchValue({ pictureUrl: null });
+    this.cdRef.detectChanges();
   }
 
   onCancel(): void {
     this.dialogRef.close();
   }
+
   onSave(event: Event): void {
-    event.preventDefault(); // Prevents form from triggering multiple actions
+    event.preventDefault();
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     if (this.isDeleteMode) {
       this.deleteMerchant();
