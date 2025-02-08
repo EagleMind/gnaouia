@@ -88,6 +88,7 @@ export class ViewArticleDetailsComponent implements OnInit, OnDestroy {
   }
 
   saveArticle(): void {
+    console.log(this.form.value);
     if (this.article) {
       const updatedArticle: Article = {
         ...this.article,

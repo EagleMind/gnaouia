@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { Router } from '@angular/router';
-import { Article } from '../../../models/articles.model';
+import { ArticleDialogComponent } from '../article-modal/modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-render-buttons',
@@ -15,10 +16,11 @@ import { Article } from '../../../models/articles.model';
 export class ActionCellRendererComponent implements ICellRendererAngularComp {
   params!: any;
   faEye = faEye;
+  faTrash = faTrash;
   componentParent: any;
-  selectedArticleId: string | null = null;
+  articleId: string | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private dialog: MatDialog) {}
 
   agInit(params: any): void {
     this.params = params;
@@ -28,7 +30,16 @@ export class ActionCellRendererComponent implements ICellRendererAngularComp {
   refresh(): boolean {
     return false;
   }
+  openDialog(id?: ArticleDialogComponent): void {
+    const dialogRef = this.dialog.open(ArticleDialogComponent, {
+      width: '400px',
+      data: {
+        id: id,
+      },
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {});
+  }
   openArticle(event: Event): void {
     event.stopPropagation();
     const articleId = this.params.data.id;
