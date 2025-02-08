@@ -99,14 +99,12 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
         field: 'originalPrice',
         sortable: true,
         filter: true,
-        valueFormatter: (params) => this.formatDate(params.value),
       },
       {
         headerName: 'Discount',
         field: 'discount',
         sortable: true,
         filter: true,
-        valueFormatter: (params) => this.formatDate(params.value),
       },
       {
         headerName: 'Actions',

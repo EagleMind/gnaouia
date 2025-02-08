@@ -7,8 +7,8 @@
         isDeleteMode
           ? "Confirm Deletion"
           : isEditMode
-          ? "Edit Announcement"
-          : "New Announcement"
+          ? "Edit Merchant"
+          : "New Merchant"
       }}
     </h2>
     @if(!isDeleteMode){
@@ -40,9 +40,6 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1"
-          >Original Price</label
-        >
         <mat-form-field>
           <mat-label>Choose a Price</mat-label>
           <input
@@ -57,9 +54,6 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1"
-          >Discount</label
-        >
         <mat-form-field>
           <mat-label>Discount</mat-label>
           <input matInput formControlName="discount" type="number" />
@@ -71,21 +65,29 @@
           >Image</label
         >
         <div class="relative mb-4">
-          @if(!data?.pictureUrl) {
+          @if(data?.pictureUrl) {
+
+          <img
+            [src]="data.pictureUrl"
+            alt="Image"
+            class="w-full h-32 object-cover rounded-md"
+          />
+          <fa-icon
+            [icon]="faXmarkCircle"
+            size="lg"
+            class="absolute top-3 right-3"
+          ></fa-icon>
+          }@else {
           <div
             class="h-32 bg-gray-200 flex items-center justify-center rounded-md"
           >
             <span>No Image</span>
           </div>
-          }@else {<img
-            [src]="data.pictureUrl"
-            alt="Announcement Image"
-            class="w-full h-32 object-cover rounded-md"
-          />}
+          }
+
           <input
             type="file"
             (change)="onImageChange($event)"
-            accept="image/*"
             class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
         </div>
