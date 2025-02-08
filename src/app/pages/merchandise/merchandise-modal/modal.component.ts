@@ -51,7 +51,7 @@ import { MerchandiseService } from '../../../_services/merchandise';
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MerchandiseDialogComponent {
+export class MerchandiseDialogComponent implements OnInit {
   faPlus = faPlus;
   faCheck = faCheck;
   faTrash = faTrash;
@@ -70,24 +70,100 @@ export class MerchandiseDialogComponent {
   ) {
     this.form = new FormGroup({
       name: new FormControl(data?.name || '', [
-        Validators.required,
         Validators.pattern('^[a-zA-Z ]*$'),
       ]),
-      url: new FormControl(data?.url || '', [Validators.required]),
+      url: new FormControl(data?.url || '', [
+        Validators.pattern('https?://.+'),
+      ]),
       originalPrice: new FormControl(data?.originalPrice || null, [
-        Validators.required,
         Validators.pattern('^[0-9]*$'),
       ]),
       discount: new FormControl(data?.discount || null, [
-        Validators.required,
         Validators.pattern('^[0-9]*$'),
       ]),
-      pictureUrl: new FormControl(data?.pictureUrl || null, [
-        Validators.required,
-      ]),
+      pictureUrl: new FormControl(data?.pictureUrl || null),
     });
-    this.isEditMode = !!this.data.id && !this.data?.isDelete;
-    this.isDeleteMode = !!this.data?.isDelete;
+
+    // Set validators based on edit mode
+    if (this.isEditMode) {
+      this.form
+        .get('name')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern('^[a-zA-Z ]*$'),
+        ]);
+      this.form
+        .get('url')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern('https?://.+'),
+        ]);
+      this.form
+        .get('originalPrice')
+        ?.setValidators([Validators.required, Validators.pattern('^[0-9]*$')]);
+      this.form
+        .get('discount')
+        ?.setValidators([Validators.required, Validators.pattern('^[0-9]*$')]);
+      this.form.get('pictureUrl')?.setValidators([Validators.required]);
+    }
+
+    // Update validity after setting validators
+    this.form.get('name')?.updateValueAndValidity();
+    this.form.get('url')?.updateValueAndValidity();
+    this.form.get('originalPrice')?.updateValueAndValidity();
+    this.form.get('discount')?.updateValueAndValidity();
+    this.form.get('pictureUrl')?.updateValueAndValidity();
+  }
+
+  ngOnInit(): void {
+    if (this.data) {
+      this.isEditMode = !!this.data.id && !this.data?.isDelete;
+      this.isDeleteMode = !!this.data?.isDelete;
+      this.form.patchValue({
+        name: this.data.name || '',
+        url: this.data.url || '',
+        originalPrice: this.data.originalPrice || null,
+        discount: this.data.discount || null,
+        pictureUrl: this.data.pictureUrl || null,
+      });
+
+      // Adjust validators based on edit mode
+      if (this.isEditMode) {
+        this.form.get('name')?.clearValidators();
+        this.form.get('url')?.clearValidators();
+        this.form.get('originalPrice')?.clearValidators();
+        this.form.get('discount')?.clearValidators();
+        this.form.get('pictureUrl')?.clearValidators();
+      } else {
+        this.form
+          .get('name')
+          ?.setValidators([
+            Validators.required,
+            Validators.pattern('^[a-zA-Z ]*$'),
+          ]);
+        this.form.get('url')?.setValidators([Validators.required]);
+        this.form
+          .get('originalPrice')
+          ?.setValidators([
+            Validators.required,
+            Validators.pattern('^[0-9]*$'),
+          ]);
+        this.form
+          .get('discount')
+          ?.setValidators([
+            Validators.required,
+            Validators.pattern('^[0-9]*$'),
+          ]);
+        this.form.get('pictureUrl')?.setValidators([Validators.required]);
+      }
+
+      // Update validity after changing validators
+      this.form.get('name')?.updateValueAndValidity();
+      this.form.get('url')?.updateValueAndValidity();
+      this.form.get('originalPrice')?.updateValueAndValidity();
+      this.form.get('discount')?.updateValueAndValidity();
+      this.form.get('pictureUrl')?.updateValueAndValidity();
+    }
   }
 
   onImageChange(event: Event): void {
@@ -128,6 +204,7 @@ export class MerchandiseDialogComponent {
     } else if (this.isEditMode) {
       this.updateAnnouncement();
     } else {
+      console.log('create');
       this.createAnnouncement();
     }
   }
