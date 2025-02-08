@@ -149,7 +149,19 @@ export class ArticleComponent implements OnInit, OnDestroy {
       })
     );
   }
-
+  deleteArticle(): void {
+    this.articleService
+      .deleteArticle(this.articleId)
+      .subscribe((response: any) => {
+        if (response) {
+          this.eventBus.events$.subscribe((event) => {
+            if (event === 'announcement-change') {
+              this.loadArticles();
+            }
+          });
+        }
+      });
+  }
   showError(message: string): void {
     this.snackBar.open(message, 'Close', { duration: 3000 });
   }
