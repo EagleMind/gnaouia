@@ -6,6 +6,12 @@ import { AnnouncementsComponent } from './pages/announcements/announcements.comp
 import { MerchandiseComponent } from './pages/merchandise/merchandise.component';
 import { ArticleComponent } from './pages/articles/article.component';
 import { ViewArticleDetailsComponent } from './pages/articles/view-article-details/view-article-details.component';
+import {
+  faNewspaper,
+  faStore,
+  faBullhorn,
+} from '@fortawesome/free-solid-svg-icons';
+
 export const routes: Routes = [
   {
     path: '',
@@ -16,19 +22,19 @@ export const routes: Routes = [
     path: 'announcements',
     canActivate: [AuthGuard],
     component: AnnouncementsComponent,
-    data: { title: 'Announcements' },
+    data: { title: 'Announcements', icon: faBullhorn },
   },
   {
     path: 'merchandise',
     canActivate: [AuthGuard],
     component: MerchandiseComponent,
-    data: { title: 'Merchandise' },
+    data: { title: 'Merchandise', icon: faStore },
   },
   {
     path: 'articles',
     canActivate: [AuthGuard],
     component: ArticleComponent,
-    data: { title: 'Articles' },
+    data: { title: 'Articles', icon: faNewspaper },
   },
   {
     path: 'articles/details/:articleId', // Moved to a top-level route with the correct syntax
