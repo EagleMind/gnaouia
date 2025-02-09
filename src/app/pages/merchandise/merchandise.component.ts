@@ -65,11 +65,7 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
       this.breakpointObserver
         .observe([Breakpoints.Small, Breakpoints.Handset])
         .subscribe((state) => {
-          if (state.matches) {
-            this.adjustColumnsForSmallScreens();
-          } else {
-            this.initializeGridColumns();
-          }
+          this.initializeGridColumns();
         })
     );
   }
@@ -85,14 +81,12 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
         field: 'name',
         sortable: true,
         filter: true,
-        flex: 2,
       },
       {
         headerName: 'URL',
         field: 'url',
         sortable: true,
         filter: true,
-        flex: 2,
       },
       {
         headerName: 'Original Price',
@@ -114,13 +108,6 @@ export class MerchandiseComponent implements OnInit, OnDestroy {
         },
       },
     ];
-  }
-
-  adjustColumnsForSmallScreens(): void {
-    this.columnDefs = this.columnDefs.map((col) => ({
-      ...col,
-      hide: col.field !== 'name', // Show only "Name" for smaller screens
-    }));
   }
 
   onGridReady(params: any): void {
