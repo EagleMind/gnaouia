@@ -62,11 +62,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       this.breakpointObserver
         .observe([Breakpoints.Small, Breakpoints.Handset])
         .subscribe((state) => {
-          if (state.matches) {
-            this.adjustColumnsForSmallScreens();
-          } else {
-            this.initializeGridColumns();
-          }
+          this.initializeGridColumns();
         })
     );
   }
@@ -84,14 +80,12 @@ export class ArticleComponent implements OnInit, OnDestroy {
         field: 'title',
         sortable: true,
         filter: true,
-        flex: 2,
       },
       {
         headerName: 'URL',
         field: 'url',
         sortable: true,
         filter: true,
-        flex: 2,
       },
       {
         headerName: 'Category',
@@ -108,13 +102,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
         },
       },
     ];
-  }
-
-  adjustColumnsForSmallScreens(): void {
-    this.columnDefs = this.columnDefs.map((col) => ({
-      ...col,
-      hide: col.field !== 'title', // Show only "Title" for smaller screens
-    }));
   }
 
   onGridReady(params: any): void {
