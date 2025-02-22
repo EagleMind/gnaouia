@@ -200,6 +200,7 @@ export class MerchandiseDialogComponent implements OnInit {
     }
 
     if (this.isDeleteMode) {
+      console.log("delete")
       this.deleteMerchant();
     } else if (this.isEditMode) {
       this.updateAnnouncement();
